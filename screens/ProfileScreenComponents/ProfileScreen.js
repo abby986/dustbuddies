@@ -34,7 +34,7 @@ export default function ProfileScreen({ navigation }) {
         </View>
 
         <Image
-          source={require('../assets/rabbit_final_copy_3.png')}
+          source={require('../../assets/rabbit_final_copy_3.png')}
           style={styles.bunnyImage}
         />
 
@@ -49,15 +49,15 @@ export default function ProfileScreen({ navigation }) {
 
         <View style={styles.badge}>
           <Image
-            source={require('../assets/gold_badge.png')}
+            source={require('../../assets/gold_badge.png')}
             style={styles.badge}
           />
           <Image
-            source={require('../assets/gold_badge.png')}
+            source={require('../../assets/gold_badge.png')}
             style={styles.badge}
           />
           <Image
-            source={require('../assets/gold_badge.png')}
+            source={require('../../assets/gold_badge.png')}
             style={styles.badge}
           />
         </View>
