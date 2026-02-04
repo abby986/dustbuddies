@@ -17,8 +17,6 @@ export default function HomeScreen() {
         style={styles.listIcon}
       />
 
-
-
     </View>
   );
 
