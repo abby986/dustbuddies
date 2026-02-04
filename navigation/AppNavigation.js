@@ -12,10 +12,10 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
         <Stack.Screen name="CreatePost" component={CreatePostScreen} />
         <Stack.Screen name="Closet" component={ClosetScreen} />
-        <Stack.Screen name="Welcome" component={WelcomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
