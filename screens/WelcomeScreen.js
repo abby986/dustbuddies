@@ -17,7 +17,7 @@ export default function WelcomeScreen({navigation}) {
         console.log('Email:', email);
         console.log('Password:', password);
         console.log('Is Sign Up:', isSignUp)
-        navigation.navigate('Home');
+        navigation.navigate('MainTabs');
     };
     const renderSignUpFields = () => {
         if (isSignUp) {

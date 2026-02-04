@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-
 const hardcodedTasks = [
   { id: '1', title: 'Do the dishes' },
   { id: '2', title: 'Mop floors' },
