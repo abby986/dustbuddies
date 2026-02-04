@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function WelcomeScreen() {
-    const navigation = useNavigation();
+export default function WelcomeScreen({navigation}) {
+    {/*const navigation = useNavigation();*/}
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -17,7 +17,7 @@ export default function WelcomeScreen() {
         console.log('Email:', email);
         console.log('Password:', password);
         console.log('Is Sign Up:', isSignUp)
-        navigation.navigate('MainApp');
+        navigation.navigate('Home');
     };
     const renderSignUpFields = () => {
         if (isSignUp) {
