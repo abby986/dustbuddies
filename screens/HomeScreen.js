@@ -1,24 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
+
+const hardcodedTasks = [
+  { id: '1', title: 'Do the dishes' },
+  { id: '2', title: 'Mop floors' },
+];
+
+
 export default function HomeScreen() {
-  {/*Hardcode Task list, will replace with data in backend*/ }
   const navigation = useNavigation();
-  const renderItem = ({ item }) => (
-    <View style={styles.taskRow}>
-      <Text style={styles.taskText}>{item.title}</Text>
-
-      <Ionicons
-        name="checkbox-outline"
-        size={28}
-        color="black"
-        style={styles.listIcon}
-      />
-
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -34,15 +27,21 @@ export default function HomeScreen() {
       <Pressable onPress={() => navigation.navigate('Tasks')}>
         <Text style={styles.linkText}>My Upcoming Tasks</Text>
       </Pressable>
+      {/* Hardcoded task list */}
+      <View style={styles.list}>
+        {hardcodedTasks.map((item) => (
+          <View key={item.id} style={styles.taskRow}>
+            <Text style={styles.taskText}>{item.title}</Text>
 
-
-      <FlatList
-        data={tasks.slice(0, 2)}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        scrollEnabled={false}
-        contentContainerStyle={styles.list}
-      />
+            <Ionicons
+              name="checkbox-outline"
+              size={28}
+              color="black"
+              style={styles.listIcon}
+            />
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
