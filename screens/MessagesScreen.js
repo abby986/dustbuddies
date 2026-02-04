@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MessagesList from './MessageComponents/ChatList';
-import DirectMessage from './MessageComponents/DirectMessage';
+import MessagesList from './Mockdata/DirectMessage';
+import DirectMessage from './Mockdata/messages';
 import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator();
@@ -32,7 +32,6 @@ export default function MessagesScreen() {
       <Stack.Screen
         name="DirectMessage"
         component={DirectMessage}
-        // FIXED: Added the arrow '=>' and parentheses around the object
         options={({ navigation, route }) => ({
           title: route.params?.name || 'Chat',
           headerTitleAlign: 'center',
