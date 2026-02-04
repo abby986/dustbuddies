@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function WelcomeScreen({navigation}) {
-    {/*const navigation = useNavigation();*/}
+//new addition: join group modal popup import
+import JoinGroupModal from './WelcomeScreenComponents/JoinGroupModal';
+
+
+export default function WelcomeScreen({ navigation }) {
+    {/*const navigation = useNavigation();*/ }
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -13,12 +17,21 @@ export default function WelcomeScreen({navigation}) {
 
     const [isSignUp, setIsSignUp] = useState(false);
 
+    //new addition: modal visibility state
+    const [showJoinModal, setShowJoinModal] = useState(false);
+
+
+    //new addition: new handleSubmit so modal is prompted to open first
     const handleSubmit = () => {
+        setShowJoinModal(true);
+    };
+
+    /*const handleSubmit = () => {
         console.log('Email:', email);
         console.log('Password:', password);
         console.log('Is Sign Up:', isSignUp)
         navigation.navigate('MainTabs');
-    };
+    };*/
     const renderSignUpFields = () => {
         if (isSignUp) {
             return (
@@ -84,6 +97,13 @@ export default function WelcomeScreen({navigation}) {
                     </Text>
                 </TouchableOpacity>
             </View>
+            {/*new addition: user clicks yes on modal, bring them to homescreen, user clicks no, bring them back to sign up */}
+            <JoinGroupModal
+                visible={showJoinModal}
+                onYes={() => { setShowJoinModal(false); navigation.navigate('Home'); }}
+                onNo={() => setShowJoinModal(false)}
+            />
+
         </View>
     );
 }
