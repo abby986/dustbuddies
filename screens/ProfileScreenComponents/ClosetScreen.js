@@ -27,15 +27,15 @@ export default function ClosetScreen({ navigation }) {
 
         <View>
             <Image
-                source={require('../assets/rabbit_final_copy_3.png')}
+                source={require('../../assets/rabbit_final_copy_3.png')}
                 style={styles.bunnyImage}
             />
         </View>
 
         <View style={styles.badgeContainer}>
-            <Image source={require('../assets/jersey.png')} style={styles.badgeImage} />
-            <Image source={require('../assets/blue_shirt.png')} style={styles.badgeImage} />
-            <Image source={require('../assets/green_shirt.png')} style={styles.badgeImage} />
+            <Image source={require('../../assets/jersey.png')} style={styles.badgeImage} />
+            <Image source={require('../../assets/blue_shirt.png')} style={styles.badgeImage} />
+            <Image source={require('../../assets/green_shirt.png')} style={styles.badgeImage} />
         </View>
 
   
