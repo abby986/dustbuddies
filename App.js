@@ -7,7 +7,6 @@ import AppNavigator from './navigation/AppNavigator';
 export default function App() {
   return (
     <>
-      <AppNavigator />
       <AppNavigation />
       <StatusBar style="auto" />
     </>

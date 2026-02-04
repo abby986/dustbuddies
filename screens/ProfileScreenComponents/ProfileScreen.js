@@ -3,7 +3,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image
+  Image,
+  Button
 } from 'react-native';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -61,6 +62,12 @@ export default function ProfileScreen({ navigation }) {
             style={styles.badge}
           />
         </View>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Button
+            title="View More"
+            onPress={() => navigation.navigate('BadgeScreen')} 
+          />
+      </View>
     </View>
   
   );
