@@ -1,11 +1,11 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import BulletinBoardScreen from '../screens/BulletinBoardScreen';
+import BulletinBoardScreen from '../screens/BulletinBoardComponents/BulletinBoardScreen';
 import TasksScreen from '../screens/TasksScreen';
 import HomeScreen from '../screens/HomeScreen';
 import MessagesScreen from '../screens/MessagesScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import ProfileScreen from '../screens/ProfileScreenComponents/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -13,7 +13,7 @@ export default function BottomTabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#007AFF',
+        tabBarActiveTintColor: '#556DC2',
         tabBarInactiveTintColor: 'gray',
         headerShown: true,
       }}
