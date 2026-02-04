@@ -1,5 +1,4 @@
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+ {/* import { createStackNavigator } from '@react-navigation/stack';
 
 import WelcomeScreen from '../screens/WelcomeScreen';
 import NavBar from './NavBar';
@@ -15,4 +14,4 @@ export default function AppNavigator() {
             <Stack.Screen name="MainApp" component={NavBar} />
         </Stack.Navigator>
     );
-}
+ } */}
