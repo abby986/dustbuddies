@@ -2,8 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable, FlatList, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { tasks } from '../Mockdata/tasks';
-
 
 export default function HomeScreen() {
   {/*Hardcode Task list, will replace with data in backend*/ }
