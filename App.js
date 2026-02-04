@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
-import NavBar from './navigation/NavBar';
+import AppNavigation from './navigation/AppNavigation';
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <NavBar />
+    <>
+      <AppNavigation />
       <StatusBar style="auto" />
-    </NavigationContainer>
+    </>
   );
 }
+
