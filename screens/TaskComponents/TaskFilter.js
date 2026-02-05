@@ -5,26 +5,89 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 export default function TaskFilter({ showMyTasks, setShowMyTasks }) {
     return (
         <View style={styles.simpleTabs}>
-            <TouchableOpacity onPress={() => setShowMyTasks(true)}>
-                <Text style={styles.simpleTabText}>My Tasks</Text>
+            <TouchableOpacity
+                style={showMyTasks ? styles.simpleTabLeftActive : styles.simpleTabLeftInactive}
+                onPress={() => setShowMyTasks(true)}
+            >
+                <Text style={showMyTasks ? styles.activeText : styles.inactiveText}>
+                    My Tasks
+                </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setShowMyTasks(false)}>
-                <Text style={styles.simpleTabText}>All Tasks</Text>
+            <TouchableOpacity
+                style={!showMyTasks ? styles.simpleTabRightActive : styles.simpleTabRightInactive}
+                onPress={() => setShowMyTasks(false)}
+            >
+                <Text style={!showMyTasks ? styles.activeText : styles.inactiveText}>
+                    All Tasks
+                </Text>
             </TouchableOpacity>
         </View>
+
+
+
     );
 }
 
-//simple style to put the task type side by side
+//crazy button styling
 const styles = StyleSheet.create({
     simpleTabs: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginBottom: 20,
+        alignItems: 'center',
         gap: 20,
+        marginBottom: 20,
+        marginTop: 30,
     },
-    simpleTabText: {
+
+    //active selected button
+    simpleTabLeftActive: {
+        backgroundColor: '#556dc2',
+        paddingVertical: 10,
+        paddingHorizontal: 25,
+        borderTopLeftRadius: 20,
+        borderBottomLeftRadius: 20,
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 100, //crazy border radius for funky shape
+    },
+    simpleTabRightActive: {
+        backgroundColor: '#556dc2',
+        paddingVertical: 10,
+        paddingHorizontal: 25,
+        borderTopLeftRadius: 100,
+        borderBottomLeftRadius: 10,
+        borderTopRightRadius: 20,
+        borderBottomRightRadius: 20,
+    },
+
+    //inactive unselected button
+    simpleTabLeftInactive: {
+        backgroundColor: '#cccccc',
+        paddingVertical: 10,
+        paddingHorizontal: 25,
+        borderTopLeftRadius: 20,
+        borderBottomLeftRadius: 20,
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 100,
+    },
+    simpleTabRightInactive: {
+        backgroundColor: '#cccccc',
+        paddingVertical: 10,
+        paddingHorizontal: 25,
+        borderTopLeftRadius: 100,
+        borderBottomLeftRadius: 10,
+        borderTopRightRadius: 20,
+        borderBottomRightRadius: 20,
+    },
+
+    //text color inside button
+    activeText: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: '600',
+    },
+    inactiveText: {
+        color: '#000000',
         fontSize: 20,
         fontWeight: '600',
     },
