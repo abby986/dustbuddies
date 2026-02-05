@@ -6,6 +6,7 @@ import CreatePostScreen from '../screens/BulletinBoardComponents/CreatePostScree
 import ClosetScreen from '../screens/ProfileScreenComponents/ClosetScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import HomeScreen from '../screens/HomeScreen';
+import BadgesScreen from '../screens/BadgesComponents/BadgesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ export default function AppNavigator() {
         <Stack.Screen name="CreatePost" component={CreatePostScreen} />
         <Stack.Screen name="Closet" component={ClosetScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Badges" component={BadgesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

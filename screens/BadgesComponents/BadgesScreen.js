@@ -14,25 +14,25 @@ import { Ionicons } from '@expo/vector-icons';
 /* Badge Data */
 
 const featuredBadges = [
-    { id: 1, image: require('../assets/GoldBadge.png'), locked: false },
-    { id: 2, image: require('../assets/SilverBadge.png'), locked: false },
-    { id: 3, image: require('../assets/BronzeBadge.png'), locked: false },
+    { id: 1, image: require('../../assets/gold.png'), locked: false },
+    { id: 2, image: require('../../assets/silver_badge.png'), locked: false },
+    { id: 3, image: require('../../assets/bronze_badge.png'), locked: false },
 ];
 
 const allBadges = [
-    { id: 4, image: require('../assets/GoldBadge.png'), locked: false },
-    { id: 5, image: require('../assets/GoldBadge.png'), locked: false },
-    { id: 6, image: require('../assets/SilverBadge.png'), locked: false },
-    { id: 7, image: require('../assets/SilverBadge.png'), locked: false },
-    { id: 8, image: require('../assets/SilverBadge.png'), locked: false },
-    { id: 9, image: require('../assets/BronzeBadge.png'), locked: false },
-    { id: 10, image: require('../assets/BronzeBadge.png'), locked: false },
-    { id: 11, image: require('../assets/BronzeBadge.png'), locked: false },
+    { id: 4, image: require('../../assets/gold.png'), locked: false },
+    { id: 5, image: require('../../assets/gold.png'), locked: false },
+    { id: 6, image: require('../../assets/silver_badge.png'), locked: false },
+    { id: 7, image: require('../../assets/silver_badge.png'), locked: false },
+    { id: 8, image: require('../../assets/silver_badge.png'), locked: false },
+    { id: 9, image: require('../../assets/bronze_badge.png'), locked: false },
+    { id: 10, image: require('../../assets/bronze_badge.png'), locked: false },
+    { id: 11, image: require('../../assets/bronze_badge.png'), locked: false },
 
-    { id: 12, image: require('../assets/LockedBadge.png'), locked: true },
-    { id: 13, image: require('../assets/LockedBadge.png'), locked: true },
-    { id: 14, image: require('../assets/LockedBadge.png'), locked: true },
-    { id: 15, image: require('../assets/LockedBadge.png'), locked: true },
+    { id: 12, image: require('../../assets/locked_badge.png'), locked: true },
+    { id: 13, image: require('../../assets/locked_badge.png'), locked: true },
+    { id: 14, image: require('../../assets/locked_badge.png'), locked: true },
+    { id: 15, image: require('../../assets/locked_badge.png'), locked: true },
 ];
 
 
@@ -73,8 +73,9 @@ export default function BadgesScreen({ navigation }) {
 
                 {/* Info */}
                 <Text style={styles.badgeTitle}>
-                    Badge #{selectedBadge.id}
+                    Defeated 15 Chore Monsters
                 </Text>
+
 
                 <Text style={styles.completedDate}>
                     Completed: 11/12/2025
