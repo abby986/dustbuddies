@@ -1,12 +1,15 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function BadgeInfoDisplay({ navigation, route }) {
     const { badge } = route.params;
+    const insets = useSafeAreaInsets();
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#fff' }}>
+        <SafeAreaView style={styles.safeArea}>
+
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Ionicons name="chevron-back" size={28} color="black" />
@@ -31,10 +34,28 @@ export default function BadgeInfoDisplay({ navigation, route }) {
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </SafeAreaView>
+
     );
 }
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+    },
+
     container: {
         flex: 1,
         alignItems: 'center',
@@ -97,8 +118,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginTop: 10,
-        marginBottom: 10,
     },
 
     backButton: {
@@ -106,9 +125,9 @@ const styles = StyleSheet.create({
     },
 
     profileCircle: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         backgroundColor: '#a1b869',
     },
 
