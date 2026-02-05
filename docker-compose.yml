@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  dustbuddies:
+    container_name: dustbuddies_app
+    build: .
+    ports:
+      - "19006:19006"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
