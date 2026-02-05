@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+//import { Ionicons } from '@expo/vector-icons';
 
+//tasks are currently hardcoded, will be replaced dynamically with backend development
 const hardcodedTasks = [
-  { id: '1', title: 'Do the dishes' },
-  { id: '2', title: 'Mop floors' },
+  { id: '1', title: '1. Do the dishes' },
+  { id: '2', title: '2. Mop floors' },
 ];
 
 
@@ -14,17 +15,23 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require('../assets/images/dustbuddies-logo.png')}
+        style={styles.logoImage}
+        resizeMode='contain'
+      />
+
       <Text style={styles.title}>Welcome Home!</Text>
       {/* Link to send the user to Tasks Page*/}
 
       <Image
         source={require('../assets/images/homeart2.png')}
         style={styles.placeholderImage}
-        resizeMode="contain"
+        resizeMode='contain'
       />
 
       <Pressable onPress={() => navigation.navigate('Tasks')}>
-        <Text style={styles.linkText}>My Upcoming Tasks</Text>
+        <Text style={styles.linkText}>View My Upcoming Tasks</Text>
       </Pressable>
       {/* Hardcoded task list */}
       <View style={styles.list}>
@@ -32,11 +39,10 @@ export default function HomeScreen() {
           <View key={item.id} style={styles.taskRow}>
             <Text style={styles.taskText}>{item.title}</Text>
 
-            <Ionicons
-              name="checkbox-outline"
-              size={28}
-              color="black"
-              style={styles.listIcon}
+            <Image
+              source={require('../assets/images/green-bunny-profile.png')}
+              style={styles.greenIcon}
+              resizeMode='contain'
             />
           </View>
         ))}
@@ -52,12 +58,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 50,
   },
+  logoImage: {
+    width: 200,
+    marginTop: -80,
+    marginBottom: -30,
+
+  },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     color: '#ffff',
     backgroundColor: '#7c98c7',
-    borderRadius: 20,
+    borderRadius: 28,
     padding: 10,
   },
   placeholderImage: {
@@ -65,12 +77,16 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   linkText: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#000',
+    fontFamily: 'Neue Montreal',
+    color: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: -30,
+    backgroundColor: '#7c98c7',
+    borderRadius: 15,
+    padding: 7,
   },
   sectionDivider: {
     height: 1,
@@ -88,6 +104,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 10,
+    marginTop: -5,
 
   },
   taskText: {
@@ -96,5 +113,10 @@ const styles = StyleSheet.create({
   },
   listIcon: {
     paddingLeft: 20,
+  },
+  greenIcon: {
+    width: 28,
+    height: 28,
+    marginLeft: 20,
   },
 });
