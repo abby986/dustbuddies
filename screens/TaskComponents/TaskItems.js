@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 //profile icon import
-import { Ionicons } from '@expo/vector-icons';
+//import { Ionicons } from '@expo/vector-icons';
+//asset image imports
+import greenIcon from '../../assets/images/green-bunny-profile.png';
+import yellowIcon from '../../assets/images/yelow-bunny-profile.png';
 
 
 //displays task title and makes it touchable so it can be clicked and bring user to either submit their task or vote on someone else's
@@ -18,11 +21,18 @@ export default function TaskItems({ task, number, onPress }) {
                 </View>
 
                 {/*profile icon from ionicons will be on right, color will match user*/}
-                <Ionicons
+                {/*<Ionicons
                     name="person-circle-outline"
                     size={40}
                     color={iconColor}
+                />*/}
+
+                {/*icons are now replaced with custom image version*/}
+                <Image
+                    source={task.mine ? greenIcon : yellowIcon}
+                    style={styles.profileIcon}
                 />
+
             </View>
         </TouchableOpacity>
     );
@@ -52,4 +62,10 @@ const styles = StyleSheet.create({
         fontSize: 18, //font size and line height for visibility
         lineHeight: 24,
     },
+    profileIcon: {
+        width: 40,
+        height: 40,
+        resizeMode: 'contain',
+    },
+
 });

@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-//thumbs and profile icon import
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+//thumbs and old profile icon import
 import { Feather, Ionicons } from '@expo/vector-icons';
+
+//asset image import
+import yellowIcon from '../../assets/images/yelow-bunny-profile.png';
 
 //display voting screen with placeholder image, thumbs up or down to vote, and display vote count
 export default function VoteTask({ task, onVote, onBack }) {
@@ -15,8 +18,13 @@ export default function VoteTask({ task, onVote, onBack }) {
             <View style={styles.placeholderContainer}>
 
                 {/*profile icon in bottom-right corner*/}
-                <View style={styles.profileIcon}>
+                {/*<View style={styles.profileIcon}>
                     <Ionicons name="person-circle-outline" size={50} color="#e8c854" />
+                </View>*/}
+
+                {/*custom icon*/}
+                <View style={styles.profileIcon}>
+                    <Image source={yellowIcon} style={styles.profileImage} />
                 </View>
 
                 {/*placeholder indicator text*/}
@@ -101,6 +109,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         marginTop: 10,
+    },
+    //image style
+    profileImage: {
+        width: 50,
+        height: 50,
+        resizeMode: 'contain',
     },
 });
 
