@@ -100,7 +100,7 @@ export default function WelcomeScreen({ navigation }) {
             {/*new addition: user clicks yes on modal, bring them to homescreen, user clicks no, bring them back to sign up */}
             <JoinGroupModal
                 visible={showJoinModal}
-                onYes={() => { setShowJoinModal(false); navigation.navigate('Home'); }}
+                onYes={() => { setShowJoinModal(false); navigation.navigate('MainTabs'); }}
                 onNo={() => setShowJoinModal(false)}
             />
 
