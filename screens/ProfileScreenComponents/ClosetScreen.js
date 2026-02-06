@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import greenIcon from '../../assets/images/green-bunny-profile.png';
 
 export default function ClosetScreen({ navigation }) {
   const [text, setText] = useState('');
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
 
+      <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.back}>‹</Text>
         </TouchableOpacity>
 
-        <View style={styles.actionRow}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })}
-
-            activeOpacity={0.7}
-          >
-            <Ionicons name="person-circle-outline" size={48} color="#A1B869" />
-          </TouchableOpacity>
-
-        </View>
-
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Profile')}
+          activeOpacity={0.7}
+        >
+          <Image source={greenIcon} style={styles.profileIcon} />
+        </TouchableOpacity>
       </View>
 
       <View>
@@ -53,17 +49,25 @@ const styles = StyleSheet.create({
   },
 
   header: {
+    marginTop: 50,
     width: '100%',
-    height: 180,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    backgroundColor: '#fff',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
   },
 
   back: {
-    fontSize: 42,
+    fontSize: 40,
+    fontWeight: '300',
+  },
+  
+  profileIcon: {
+    width: 48,
+    height: 48,
+    resizeMode: 'contain',
   },
 
   sideIcons: {
