@@ -1,95 +1,116 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, } from 'react-native';
 
-// Data for the grid
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
+//Data for the grid
 const featuredBadges = [
-    { id: 1, image: require('../../assets/gold.png'), locked: false },
-    { id: 2, image: require('../../assets/silver_badge.png'), locked: false },
-    { id: 3, image: require('../../assets/bronze_badge.png'), locked: false },
+    { id: 1, image: require('../../assets/gold.png') },
+    { id: 2, image: require('../../assets/silver_badge.png') },
+    { id: 3, image: require('../../assets/bronze_badge.png') },
 ];
 
 const allBadges = [
-    { id: 4, image: require('../../assets/gold.png'), locked: false },
-    { id: 5, image: require('../../assets/gold.png'), locked: false },
-    { id: 6, image: require('../../assets/silver_badge.png'), locked: false },
-    { id: 7, image: require('../../assets/silver_badge.png'), locked: false },
-    { id: 8, image: require('../../assets/silver_badge.png'), locked: false },
-    { id: 9, image: require('../../assets/bronze_badge.png'), locked: false },
-    { id: 10, image: require('../../assets/bronze_badge.png'), locked: false },
-    { id: 11, image: require('../../assets/bronze_badge.png'), locked: false },
-    { id: 12, image: require('../../assets/locked_badge.png'), locked: true },
-    { id: 13, image: require('../../assets/locked_badge.png'), locked: true },
-    { id: 14, image: require('../../assets/locked_badge.png'), locked: true },
-    { id: 15, image: require('../../assets/locked_badge.png'), locked: true },
+    { id: 4, image: require('../../assets/gold.png') },
+    { id: 5, image: require('../../assets/gold.png') },
+    { id: 6, image: require('../../assets/silver_badge.png') },
+    { id: 7, image: require('../../assets/silver_badge.png') },
+    { id: 8, image: require('../../assets/silver_badge.png') },
+    { id: 9, image: require('../../assets/bronze_badge.png') },
+    { id: 10, image: require('../../assets/bronze_badge.png') },
+    { id: 11, image: require('../../assets/bronze_badge.png') },
 ];
 
 export default function BadgesList({ navigation }) {
+    const insets = useSafeAreaInsets();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerShown: false,
+        });
+    }, [navigation]);
+
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Ionicons name="chevron-back" size={28} color="black" />
-                </TouchableOpacity>
-                <View style={styles.profileCircle} />
-            </View>
+        <SafeAreaView style={styles.safeArea}>
+            <View style={[styles.content, { paddingTop: insets.top + 16 }]}>
 
-            <Text style={styles.sectionTitle}>Featured:</Text>
-            <View style={styles.grid}>
-                {featuredBadges.map((badge) => (
+                {/* Header */}
+                <View style={styles.header}>
                     <TouchableOpacity
-                        key={badge.id}
-                        style={styles.badgeWrapper}
-                        onPress={() => navigation.navigate('BadgeInfo', { badge })}
+                        onPress={() => navigation.goBack()}
+                        style={styles.iconButton}
                     >
-                        <Image source={badge.image} style={styles.featuredImage} />
+                        <Ionicons name="chevron-back" size={28} />
                     </TouchableOpacity>
-                ))}
-            </View>
 
-            <Text style={styles.sectionTitle}>All:</Text>
-            <View style={styles.grid}>
-                {allBadges.map((badge) => (
-                    <TouchableOpacity
-                        key={badge.id}
-                        style={styles.badgeWrapper}
-                        disabled={badge.locked}
-                        onPress={() => navigation.navigate('BadgeInfo', { badge })}
-                    >
-                        <Image
-                            source={badge.image}
-                            style={[styles.badgeImage, badge.locked && styles.lockedBadge]}
-                        />
-                    </TouchableOpacity>
-                ))}
+                    <Image
+                        source={require('../../assets/images/green-bunny-profile.png')}
+                        style={styles.profile}
+                    />
+                </View>
+
+                {/* Featured */}
+                <Text style={styles.sectionTitle}>Featured</Text>
+
+                <View style={styles.grid}>
+                    {featuredBadges.map((badge) => (
+                        <TouchableOpacity
+                            key={badge.id}
+                            style={styles.badgeWrapper}
+                            onPress={() => navigation.navigate('BadgeInfo', { badge })}
+                        >
+                            <Image source={badge.image} style={styles.badgeImage} />
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
+                {/* ALL */}
+                <Text style={styles.sectionTitle}>All</Text>
+
+                <View style={styles.grid}>
+                    {allBadges.map((badge) => (
+                        <TouchableOpacity
+                            key={badge.id}
+                            style={styles.badgeWrapper}
+                            onPress={() => navigation.navigate('BadgeInfo', { badge })}
+                        >
+                            <Image source={badge.image} style={styles.badgeImage} />
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
             </View>
-        </ScrollView>
+        </SafeAreaView>
     );
 }
+
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+
+    content: {
+        flex: 1,
+        paddingHorizontal: 20,
+    },
+
     header: {
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'space-between',
-        marginTop: 10,
-        marginBottom: 10,
+        alignItems: 'center',
+        marginBottom: 20,
     },
 
-    backButton: {
-        padding: 5,
+    iconButton: {
+        padding: 8,
     },
 
-    profileCircle: {
+    profile: {
         width: 36,
         height: 36,
         borderRadius: 18,
-        backgroundColor: '#a1b869',
-    },
-
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        paddingHorizontal: 20,
     },
 
     sectionTitle: {
@@ -112,22 +133,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
-    /* Featured badges */
-    featuredImage: {
-        width: '120%',
-        height: 120,
-        resizeMode: 'contain',
-    },
-
-    /* All badges */
     badgeImage: {
-        width: '120%',
-        height: '120%',
+        width: '110%',
+        height: '110%',
         resizeMode: 'contain',
-    },
-
-    /* Locked style */
-    lockedBadge: {
-        opacity: 0.35,
     },
 });

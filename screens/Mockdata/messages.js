@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -10,28 +10,28 @@ const messages = [
         name: 'Lauren Ipsum',
         lastMessage: 'I think your car is parked behind mine!',
         date: '11/16/19',
-        color: '#A6D8A8',
+        color: require('../../assets/images/green-bunny-profile.png'),
     },
     {
         id: '2',
         name: 'Blah Blah',
         lastMessage: 'Placeholder text',
         date: '11/15/19',
-        color: '#F2D16B',
+        color: require('../../assets/images/yelow-bunny-profile.png'),
     },
     {
         id: '3',
         name: 'Blah Blah 2',
         lastMessage: 'Placeholder text',
         date: '10/30/19',
-        color: '#F28B82',
+        color: require('../../assets/images/red-bunny-profile.png'),
     },
     {
         id: '4',
         name: 'Group Chat',
         lastMessage: 'Photo',
         date: '10/28/19',
-        color: '#7b98c7',
+        color: require('../../assets/images/group-chat-profile.png'),
     },
 ];
 
@@ -47,8 +47,10 @@ export default function MessagesList() {
                 })
             }
         >
-            <View style={[styles.avatar, { backgroundColor: item.color }]}>
-            </View>
+            <Image
+                source={item.color}
+                style={styles.avatar}
+            />
 
             <View style={styles.messageContent}>
                 <Text style={styles.name}>{item.name}</Text>
@@ -69,7 +71,7 @@ export default function MessagesList() {
 
                 <TouchableOpacity style={styles.buttonContainer}>
 
-                    <Ionicons name="create-outline" size={24} color="#black" />
+                    <Ionicons name="create-outline" size={24} color="black" />
                 </TouchableOpacity>
             </View>
 
@@ -105,7 +107,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 16,
         fontWeight: '700',
-        color: '#black',
+        color: 'black',
     },
     messageRow: {
         flexDirection: 'row',
