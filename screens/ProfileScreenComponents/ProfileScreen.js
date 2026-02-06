@@ -8,15 +8,23 @@ import {
 } from 'react-native';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
+import greenIcon from '../../assets/images/green-bunny-profile.png';
 
 export default function ProfileScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.back}>‹</Text>
-        </TouchableOpacity>
-      </View>
+       <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={styles.back}>‹</Text>
+          </TouchableOpacity>
+  
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            activeOpacity={0.7}
+          >
+            <Image source={greenIcon} style={styles.profileIcon} />
+          </TouchableOpacity>
+        </View>
 
       <View style={styles.sideIcons}>
         <TouchableOpacity
@@ -82,22 +90,29 @@ const styles = StyleSheet.create({
 
   header: {
     width: '100%',
-    height: 80,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    backgroundColor: '#fff',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
   },
 
   back: {
-    fontSize: 38,
+    fontSize: 40,
+    fontWeight: '300',
+  },
+  
+  profileIcon: {
+    width: 48,
+    height: 48,
+    resizeMode: 'contain',
   },
 
   sideIcons: {
     position: 'absolute',
     right: 16,
-    top: 100,
+    top: 200,
     justifyContent: 'space-between',
     height: 120,
   },
