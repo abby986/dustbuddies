@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MessagesList from './Mockdata/messages';
 import DirectMessage from './Mockdata/DirectMessage';
@@ -16,13 +16,14 @@ export default function MessagesScreen() {
         options={{
           title: '',
           headerRight: () => (
-            <View
+            <Image
+              source={require('../assets/images/green-bunny-profile.png')}
               style={{
                 width: 36,
                 height: 36,
                 borderRadius: 18,
-                backgroundColor: '#A6D8A8',
                 marginRight: 15,
+                backgroundColor: '',
               }}
             />
           ),

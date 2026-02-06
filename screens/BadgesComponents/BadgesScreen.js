@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /* Badge Data */
 
@@ -37,6 +38,7 @@ const allBadges = [
 
 
 export default function BadgesScreen({ navigation }) {
+    const insets = useSafeAreaInsets();
 
     /* STATE */
     const [selectedBadge, setSelectedBadge] = useState(null);
@@ -44,8 +46,7 @@ export default function BadgesScreen({ navigation }) {
 
     if (selectedBadge) {
         return (
-            <View style={styles.container}>
-
+            <ScrollView style={styles.container}>
                 {/* Header */}
                 <View style={styles.header}>
 
@@ -57,7 +58,10 @@ export default function BadgesScreen({ navigation }) {
                     </TouchableOpacity>
 
                     {/* Profile */}
-                    <View style={styles.profileCircle} />
+                    <Image
+                        source={require('../../assets/images/green-bunny-profile.png')}
+                        style={styles.profileImage}
+                    />
 
                 </View>
 
@@ -104,7 +108,7 @@ export default function BadgesScreen({ navigation }) {
 
                 </View>
 
-            </View>
+            </ScrollView>
         );
     }
 
@@ -124,7 +128,10 @@ export default function BadgesScreen({ navigation }) {
                     <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
 
-                <View style={styles.profileCircle} />
+                <Image
+                    source={require('../../assets/images/green-bunny-profile.png')}
+                    style={styles.profileImage}
+                />
 
             </View>
 
@@ -175,6 +182,13 @@ export default function BadgesScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    profileImage: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        resizeMode: 'cover',
+    },
+
 
     container: {
         flex: 1,
