@@ -65,7 +65,7 @@ export default function WelcomeScreen({ navigation }) {
         <View style={styles.container}>
             <Text style={styles.welcomeText}>Welcome to</Text>
             <Image //CHRIS PLEASE PUT THE TITLE LOGO IN THE ASSETS AREA WHEN YOU GET IT
-                source={require('../assets/title.png')}
+                source={require('../assets/images/dustbuddies-logo.png')}
                 style={styles.title}
             ></Image>
 
