@@ -13,17 +13,31 @@
       "backgroundColor": "#7c98c7"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photos to upload images.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.abby986.DustBuddiesApp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "../assets/dustbuddies-icon.png",
         "backgroundColor": "#7c98c7"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "favicon": "./assets/dustbuddies-icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1807aa0f-38f6-41ed-bf1e-da6d1ff48ba7"
+      }
     }
   }
 }
