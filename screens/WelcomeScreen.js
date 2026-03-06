@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Alert, ScrollView } from 'react-native';
+import { auth, db } from '../firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 //new addition: join group modal popup import
 import JoinGroupModal from './WelcomeScreenComponents/JoinGroupModal';
 
@@ -22,8 +23,51 @@ export default function WelcomeScreen({ navigation }) {
 
 
     //new addition: new handleSubmit so modal is prompted to open first
-    const handleSubmit = () => {
-        setShowJoinModal(true);
+    const handleSubmit = async () => {
+        if (!email || !password) {
+            Alert.alert('Missing fields', 'Please enter both email and password.');
+            return;
+        }
+        if (isSignUp) {
+            if (password !== confirmPassword) {
+                Alert.alert('Passwords do not match!', 'Please make sure both passwords are the same!');
+                return;
+            }
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const uid = userCredential.user.uid;
+                await setDoc(doc(db, 'users', uid), {
+                    firstName, lastName, phoneNumber, email,
+                    createdAt: new Date(),
+                    groupId: null,
+
+                });
+                setShowJoinModal(true);
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    Alert.alert('Email already in use', 'An account with this email already exists. Try signing in instead.');
+                } else if (error.code === 'auth/weak-password') {
+                    Alert.alert('Weak password', 'Password should be at least 6 characters.');
+                } else if (error.code === 'auth/invalid-email') {
+                    Alert.alert('Invalid email', 'Please enter a valid email address.');
+                } else {
+                    Alert.alert('Sign up failed', error.message);
+                }
+            }
+        } else {
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                navigation.navigate('MainTabs');
+            } catch (error) {
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    Alert.alert('Sign in failed', 'Incorrect email or password. Please try again.');
+                } else if (error.code === 'auth/invalid-email') {
+                    Alert.alert('Invalid email', 'Please enter a valid email address.');
+                } else {
+                    Alert.alert('Sign in failed', error.message);
+                }
+            }
+        }
     };
 
     /*const handleSubmit = () => {
@@ -40,21 +84,21 @@ export default function WelcomeScreen({ navigation }) {
                         style={styles.input}
                         placeholder="First Name"
                         value={firstName}
-                        onChangeText={setFirstName}
-                    />
+                        onChangeText={setFirstName}>
+                    </TextInput>
                     <TextInput
                         style={styles.input}
                         placeholder="Last Name"
                         value={lastName}
-                        onChangeText={setLastName}
-                    />
+                        onChangeText={setLastName}>
+                    </TextInput>
                     <TextInput
                         style={styles.input}
                         placeholder="Phone Number"
                         value={phoneNumber}
                         onChangeText={setPhoneNumber}
-                        keyboardType="phone-pad"
-                    />
+                        keyboardType="phone-pad">
+                    </TextInput>
                 </>
             );
         }
@@ -62,7 +106,7 @@ export default function WelcomeScreen({ navigation }) {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.welcomeText}>Welcome to</Text>
             <Image //CHRIS PLEASE PUT THE TITLE LOGO IN THE ASSETS AREA WHEN YOU GET IT
                 source={require('../assets/images/dustbuddies-logo.png')}
@@ -88,6 +132,15 @@ export default function WelcomeScreen({ navigation }) {
                     onChangeText={setPassword}
                     secureTextEntry={true}>
                 </TextInput>
+                {isSignUp && (
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Confirm Password"
+                        value={confirmPassword}
+                        onChangeText={setConfirmPassword}
+                        secureTextEntry={true}>
+                    </TextInput>
+                )}
                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                     <Text style={styles.submitText}>{isSignUp ? 'Sign up' : 'Sign In'}</Text>
                 </TouchableOpacity>
@@ -101,20 +154,21 @@ export default function WelcomeScreen({ navigation }) {
             <JoinGroupModal
                 visible={showJoinModal}
                 onYes={() => { setShowJoinModal(false); navigation.navigate('MainTabs'); }}
-                onNo={() => setShowJoinModal(false)}
+                onNo={() => { setShowJoinModal(false); navigation.navigate('MainTabs'); }}
             />
 
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
+        paddingBottom: 300,
     },
     welcomeText: {
         fontSize: 32,
