@@ -1,88 +1,211 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, StyleSheet, Image, ScrollView, TouchableOpacity, } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import greenIcon from '../../assets/images/green-bunny-profile.png';
+//new imports for firebase
+import { db } from '../../firebase';
+import { collection, onSnapshot, orderBy, query, doc, updateDoc, increment, arrayUnion, where } from 'firebase/firestore';
+
 
 export default function BulletinBoardScreen({ navigation }) {
+  const [posts, setPosts] = useState([]);
+  const [pickerOpen, setPickerOpen] = useState(null); // postId when picking emoji
+  const [commentingOn, setCommentingOn] = useState(null);
+  const [commentText, setCommentText] = useState('');
+
+  useEffect(() => {
+    const q = query(
+      collection(db, "posts"),
+      where("expiresAt", ">", new Date()),
+      orderBy("expiresAt", "desc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setPosts(list);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleReaction = async (postId, emoji) => {
+    const postRef = doc(db, "posts", postId);
+
+    await updateDoc(postRef, {
+      [`reactions.${emoji}`]: increment(1)
+    });
+  };
+
+  const handleAddComment = async (postId) => {
+    if (!commentText.trim()) return;
+
+    const postRef = doc(db, "posts", postId);
+
+    await updateDoc(postRef, {
+      comments: arrayUnion({
+        text: commentText,
+        createdAt: new Date(),
+        user: "Anonymous",
+      }),
+    });
+
+    setCommentText('');
+    setCommentingOn(null);
+  };
+
+
   return (
     <View style={styles.container}>
-       <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.back}>‹</Text>
-          </TouchableOpacity>
-  
-          <TouchableOpacity
+      <View style={styles.header}>
+        {/*<TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={styles.back}>‹</Text>
+        </TouchableOpacity>*/}
+
+        {/*<TouchableOpacity
             onPress={() => navigation.navigate('Profile')}
             activeOpacity={0.7}
-          >
-            <Image source={greenIcon} style={styles.profileIcon} />
-          </TouchableOpacity>
-        </View>
+          >*/}
 
-     <View style={styles.actionRow}>
-      <TouchableOpacity
-      onPress={() => navigation.navigate('CreatePost')}
-      activeOpacity={0.7}
-      >
-        <Ionicons name="create" size={32} color="#A1B869" />
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })}
+          activeOpacity={0.7}
+        >
 
+          <Image source={greenIcon} style={styles.profileIcon} />
+        </TouchableOpacity>
+      </View>
+
+      {/*create post button*/}
+      <View style={styles.actionRow}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('CreatePost')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="create" size={32} color="#A1B869" />
+        </TouchableOpacity>
+      </View>
+
+      {/* bulletin feed */}
       <ScrollView contentContainerStyle={styles.feed}>
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.avatar} />
-            <Text style={styles.username}>Anonymous:</Text>
+        {posts.map(post => (
+          <View key={post.id} style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.avatar} />
+              <Text style={styles.username}>{post.user || "Anonymous"}:</Text>
+            </View>
+
+            <Text style={styles.postText}>{post.text}</Text>
+
+            {post.imageUrl && (
+              <Image source={{ uri: post.imageUrl }} style={styles.postImage} />
+            )}
+
+            {/* Reactions */}
+            <View style={styles.reactionRow}>
+              {/* reactions on left */}
+              <View style={styles.reactionLeft}>
+                {Object.entries(post.reactions || {}).map(([emoji, count]) => (
+                  <TouchableOpacity key={emoji} onPress={() => handleReaction(post.id, emoji)}>
+                    <Text style={styles.reactionText}>{emoji} {count}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* action column,comments on right */}
+              <View style={styles.actionColumn}>
+                <TouchableOpacity onPress={() => setPickerOpen(post.id)}>
+                  <Text style={styles.addReaction}>➕</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => setCommentingOn(post.id)}>
+                  <Ionicons name="chatbubbles-outline" size={24} color="#000" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+
+            {/* hidden emoji input */}
+            {pickerOpen === post.id && (
+              <TextInput
+                autoFocus
+                style={{ height: 0, width: 0 }}
+                maxLength={2} // prevents multiple characters
+                onChangeText={(emoji) => {
+                  // Close picker immediately
+                  setPickerOpen(null);
+
+                  // reject empty input
+                  if (!emoji) return;
+
+                  // reject non-emoji input
+                  const isEmoji = /\p{Emoji}/u.test(emoji);
+                  if (!isEmoji) return;
+
+                  // accept only one emoji
+                  handleReaction(post.id, emoji);
+                }}
+              />
+            )}
+
+            {/* comment input */}
+            {commentingOn === post.id && (
+              <View style={{ marginTop: 10 }}>
+                <TextInput
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChangeText={setCommentText}
+                  style={{
+                    backgroundColor: '#eee',
+                    padding: 8,
+                    borderRadius: 8,
+                    marginBottom: 6,
+                  }}
+                />
+
+                <TouchableOpacity
+                  onPress={() => handleAddComment(post.id)}
+                  style={{
+                    backgroundColor: '#A1B869',
+                    padding: 8,
+                    borderRadius: 8,
+                    alignItems: 'center'
+                  }}
+                >
+                  <Text style={{ color: 'white', fontWeight: 'bold' }}>Post</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* comment list */}
+            {post.comments && post.comments.length > 0 && (
+              <View style={styles.commentList}>
+                {post.comments.map((c, index) => (
+                  <View key={index} style={styles.commentItem}>
+                    <Text style={styles.commentUser}>{c.user}:</Text>
+                    <Text>{c.text}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+
+            <Text style={styles.timestamp}>
+              {post.createdAt?.toDate().toLocaleString() || "Just now"}
+            </Text>
           </View>
-
-          <Text style={styles.postText}>
-            Who thinks we should move the litter box?
-          </Text>
-
-          <Image
-            source={{ uri:'https://upload.wikimedia.org/wikipedia/commons/f/f7/Japanese_litter_box.jpg' }}
-            style={styles.postImage}
-          />
-
-          <View style={styles.reactionIcons}>
-            <Text>👍 2</Text>
-            <Text>👎 1</Text>
-            <Text>💬</Text>
-          </View>
-
-          <Text style={styles.timestamp}>Sent 10/22/25</Text>
-        </View>
-        
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.avatar} />
-            <Text style={styles.username}>Chase:</Text>
-          </View>
-
-          <Text style={styles.postText}>
-            I just wanted to let you know that a few friends are coming over tomorrow afternoon.
-          </Text>
-
-          <View style={styles.reactionIcons}>
-            <Text>💬</Text>
-          </View>
-
-          <Text style={styles.timestamp}>Sent 10/19/25</Text>
-        </View>
+        ))}
       </ScrollView>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#ffffff',
   },
 
   header: {
@@ -100,7 +223,7 @@ const styles = StyleSheet.create({
     fontWeight: '300',
   },
 
-   actionButton: {
+  actionButton: {
     width: 50,
     height: 50,
     borderRadius: 14,
@@ -118,7 +241,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#efefef',
     borderRadius: 20,
     marginHorizontal: 16,
     marginBottom: 16,
@@ -161,17 +284,52 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 
-  reactionIcons: {
+  reactionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginTop: 8,
   },
+
+
+  reactionLeft: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    flexShrink: 1,
+  },
+
+
+  reactionText: {
+    marginRight: 12,
+    fontSize: 16
+  },
+
+  actionColumn: {
+    alignItems: 'flex-end',
+    gap: 6,
+  },
+
+  addReaction: {
+    fontSize: 22,
+    marginBottom: 10,
+  },
+
+  commentBubble: {
+    fontSize: 22,
+    marginTop: 8,
+  },
+
 
   timestamp: {
     fontSize: 12,
     color: '#888',
-    marginTop: 6,
-    alignSelf: 'flex-end',
+    marginTop: 15,
+    alignSelf: 'flex-end'
   },
-  
+
+  commentList: {
+    marginTop: 16,
+  },
+
 });
+
