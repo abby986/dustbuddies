@@ -7,24 +7,56 @@ import {
   Button
 } from 'react-native';
 
+import { useState, useEffect } from 'react';
+import { auth, db } from '../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
+
 import Ionicons from '@expo/vector-icons/Ionicons';
 import greenIcon from '../../assets/images/green-bunny-profile.png';
 
+const itemSources = {
+  jersey: require('../../assets/jersey.png'),
+  blue_shirt: require('../../assets/blue_shirt.png'),
+  green_shirt: require('../../assets/green_shirt.png'),
+};
+
 export default function ProfileScreen({ navigation }) {
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+        setUserData(userDoc.data());
+      }
+    };
+
+    fetchUser();
+    const unsubscribe = navigation.addListener('focus', fetchUser);
+    return unsubscribe;
+  }, [navigation]);
   return (
     <View style={styles.container}>
-       <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.back}>‹</Text>
-          </TouchableOpacity>
-  
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-            activeOpacity={0.7}
-          >
-            <Image source={greenIcon} style={styles.profileIcon} />
-          </TouchableOpacity>
-        </View>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={styles.back}>‹</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Profile')}
+          activeOpacity={0.7}
+        >
+          <Image source={greenIcon} style={styles.profileIcon} />
+        </TouchableOpacity>
+      </View>
+
+      {userData && (
+        <Text style={styles.userName}>
+          {userData.firstName}'s DustBuddy
+        </Text>
+      )}
 
       <View style={styles.sideIcons}>
         <TouchableOpacity
@@ -42,10 +74,21 @@ export default function ProfileScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <Image
-        source={require('../../assets/rabbit_final_copy_3.png')}
-        style={styles.bunnyImage}
-      />
+      <View style={styles.bunnyWrapper}>
+        <Image
+          source={require('../../assets/rabbit_final_copy_3.png')}
+          style={styles.bunnyImage}
+        />
+        {userData?.outfit?.shirt && (
+          <Image source={itemSources[userData.outfit.shirt]} style={styles.clothingOverlay} />
+        )}
+        {userData?.outfit?.hat && (
+          <Image source={itemSources[userData.outfit.hat]} style={styles.hatOverlay} />
+        )}
+        {userData?.outfit?.pants && (
+          <Image source={itemSources[userData.outfit.pants]} style={styles.pantsOverlay} />
+        )}
+      </View>
 
       <View contentContainerStyle={styles.feed}>
         <View style={styles.card}>
@@ -102,7 +145,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '300',
   },
-  
+
   profileIcon: {
     width: 48,
     height: 48,
@@ -152,6 +195,44 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
+  },
+  userName: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#363636',
+    marginTop: -20,
+    paddingBottom: 20,
+    paddingTop: -20,
+  },
+
+  bunnyWrapper: {
+    width: 320,
+    height: 320,
+    position: 'relative',
+  },
+  clothingOverlay: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    resizeMode: 'contain',
+    top: 130,
+    left: 65,
+  },
+  hatOverlay: {
+    position: 'absolute',
+    width: 160,
+    height: 160,
+    resizeMode: 'contain',
+    top: 10,
+    left: 75,
+  },
+  pantsOverlay: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    resizeMode: 'contain',
+    top: 200,
+    left: 65,
   },
 });
 

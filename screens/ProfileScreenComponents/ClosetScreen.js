@@ -1,10 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import greenIcon from '../../assets/images/green-bunny-profile.png';
+import { auth, db } from '../../firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+
+const itemSources = {
+  jersey: require('../../assets/jersey.png'),
+  blue_shirt: require('../../assets/blue_shirt.png'),
+  green_shirt: require('../../assets/green_shirt.png'),
+};
 
 export default function ClosetScreen({ navigation }) {
-  const [text, setText] = useState('');
+  const [selectedTab, setSelectedTab] = useState('Shirts');
+  const [selectedShirt, setSelectedShirt] = useState(null);
+  const [selectedHat, setSelectedHat] = useState(null);
+  const [selectedPants, setSelectedPants] = useState(null);
+
+  useEffect(() => {
+    const loadOutfit = async () => {
+      const uid = auth.currentUser?.uid;
+      if (!uid) return;
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        setSelectedShirt(data.outfit?.shirt || null);
+        setSelectedHat(data.outfit?.hat || null);
+        setSelectedPants(data.outfit?.pants || null);
+      }
+    };
+    loadOutfit();
+  }, []);
+
+  const saveOutfit = async (shirt, hat, pants) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+    await updateDoc(doc(db, 'users', uid), {
+      outfit: { shirt, hat, pants }
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -22,17 +56,58 @@ export default function ClosetScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <View>
-        <Image
-          source={require('../../assets/rabbit_final_copy_3.png')}
-          style={styles.bunnyImage}
-        />
+      <View style={styles.bunnyWrapper}>
+        <Image source={require('../../assets/rabbit_final_copy_3.png')} style={styles.bunnyImage} />
+        {selectedShirt && (
+          <Image source={itemSources[selectedShirt]} style={styles.clothingOverlay} />
+        )}
+        {selectedHat && (
+          <Image source={itemSources[selectedHat]} style={styles.hatOverlay} />
+        )}
+        {selectedPants && (
+          <Image source={itemSources[selectedPants]} style={styles.pantsOverlay} />
+        )}
       </View>
 
+
+      <View style={styles.tabBar}>
+        {['Shirts', 'Hats', 'Pants'].map(tab => (
+          <TouchableOpacity
+            key={tab}
+            style={[styles.tabButton, selectedTab === tab && styles.tabButtonActive]}
+            onPress={() => setSelectedTab(tab)}
+          >
+            <Text style={[styles.tabText, selectedTab === tab && styles.tabTextActive]}>
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
+
+      </View>
       <View style={styles.badgeContainer}>
-        <Image source={require('../../assets/jersey.png')} style={styles.badgeImage} />
-        <Image source={require('../../assets/blue_shirt.png')} style={styles.badgeImage} />
-        <Image source={require('../../assets/green_shirt.png')} style={styles.badgeImage} />
+        {selectedTab === 'Shirts' && (
+          <>
+            <TouchableOpacity onPress={() => { setSelectedShirt('jersey'); saveOutfit('jersey', selectedHat, selectedPants); }}>
+              <Image source={itemSources.jersey} style={styles.badgeImage} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { setSelectedShirt('blue_shirt'); saveOutfit('blue_shirt', selectedHat, selectedPants); }}>
+              <Image source={itemSources.blue_shirt} style={styles.badgeImage} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { setSelectedShirt('green_shirt'); saveOutfit('green_shirt', selectedHat, selectedPants); }}>
+              <Image source={itemSources.green_shirt} style={styles.badgeImage} />
+            </TouchableOpacity>
+          </>
+        )}
+        {selectedTab === 'Hats' && (
+          <>
+            {/* add hat TouchableOpacity items here */}
+          </>
+        )}
+        {selectedTab === 'Pants' && (
+          <>
+            {/* add pants TouchableOpacity items here */}
+          </>
+        )}
       </View>
 
 
@@ -63,7 +138,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '300',
   },
-  
+
   profileIcon: {
     width: 48,
     height: 48,
@@ -78,22 +153,54 @@ const styles = StyleSheet.create({
     height: 120,
   },
 
+  bunnyWrapper: {
+    width: 350,
+    height: 350,
+    position: 'relative',
+  },
   bunnyImage: {
     width: 350,
     height: 350,
-    marginVertical: 12,
     resizeMode: 'contain',
+  },
+  clothingOverlay: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    top: 140,
+    left: 75,
+  },
+  hatOverlay: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    resizeMode: 'contain',
+    top: 10,
+    left: 85,
+  },
+
+  pantsOverlay: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    top: 200,
+    left: 75,
   },
 
   badgeContainer: {
     flex: 1,
     width: '90%',
     backgroundColor: '#7B98C7',
-    borderRadius: 24,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
     paddingVertical: 24,
     paddingHorizontal: 24,
     flexDirection: 'row',
-    alignItems: 'top',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     marginBottom: 16,
     shadowColor: "#000",
@@ -109,6 +216,32 @@ const styles = StyleSheet.create({
     height: 100,
     resizeMode: 'contain',
     marginHorizontal: 8,
+  },
+
+  tabBar: {
+    flexDirection: 'row',
+    width: '90%',
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderBottomWidth: 0,
+    borderBottomColor: 'transparent',
+  },
+  tabButtonActive: {
+    backgroundColor: '#7B98C7',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  tabText: {
+    fontSize: 16,
+    color: '#999',
+    fontWeight: 'bold',
+  },
+  tabTextActive: {
+    color: '#ffff',
+    fontWeight: 'bold',
   },
 
 
