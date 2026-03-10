@@ -21,6 +21,7 @@
       "bundleIdentifier": "com.abby986.DustBuddiesApp"
     },
     "android": {
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "../assets/dustbuddies-icon.png",
         "backgroundColor": "#7c98c7"
