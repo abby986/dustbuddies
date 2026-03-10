@@ -1,17 +1,20 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+
 
 export default function BadgeInfoDisplay({ navigation, route }) {
     const { badge } = route.params;
     const insets = useSafeAreaInsets();
 
+
     return (
         <SafeAreaView style={styles.safeArea}>
 
+
             {/* Header */}
-            <View style={[styles.header, { paddingTop: insets.top + 50 }]}>
+            <View style={styles.header}>
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
                     style={styles.iconButton}
@@ -19,47 +22,55 @@ export default function BadgeInfoDisplay({ navigation, route }) {
                     <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
 
+
                 <Image
                     source={require('../../assets/images/green-bunny-profile.png')}
                     style={styles.profile}
                 />
             </View>
 
+
             {/* Main */}
             <View style={styles.container}>
+
 
                 <View style={styles.imageContainer}>
                     <Image source={badge.image} style={styles.badgeImage} />
                 </View>
 
-                <Text style={styles.badgeTitle}>
-                    Defeated 15 Chore Monsters
-                </Text>
+
+                <Text style={styles.badgeTitle}>{badge.name}</Text>
+
 
                 <Text style={styles.completedDate}>
                     Completed: 11/12/2025
                 </Text>
+
 
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={[styles.button, styles.featureButton]}>
                         <Text style={styles.buttonText}>Feature Badge</Text>
                     </TouchableOpacity>
 
+
                     <TouchableOpacity style={[styles.button, styles.removeButton]}>
                         <Text style={styles.buttonText}>Remove from Featured</Text>
                     </TouchableOpacity>
                 </View>
+
 
             </View>
         </SafeAreaView>
     );
 }
 
+
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
         backgroundColor: '#fff',
     },
+
 
     header: {
         flexDirection: 'row',
@@ -69,11 +80,13 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
 
+
     container: {
         flex: 1,
         alignItems: 'center',
         paddingTop: 10,
     },
+
 
     imageContainer: {
         width: 220,
@@ -84,17 +97,20 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
 
+
     badgeImage: {
         width: 180,
         height: 180,
         resizeMode: 'contain',
     },
 
+
     profile: {
         width: 40,
         height: 40,
         borderRadius: 20,
     },
+
 
     badgeTitle: {
         fontSize: 22,
@@ -104,11 +120,13 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
 
+
     completedDate: {
         fontSize: 16,
         color: '#666',
         marginBottom: 50,
     },
+
 
     buttonContainer: {
         width: '100%',
@@ -116,9 +134,11 @@ const styles = StyleSheet.create({
         gap: 15,
     },
 
+
     iconButton: {
         padding: 8,
     },
+
 
     button: {
         width: '70%',
@@ -132,13 +152,16 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
 
+
     featureButton: {
         backgroundColor: '#7B98C7',
     },
 
+
     removeButton: {
         backgroundColor: '#DB6262',
     },
+
 
     buttonText: {
         color: '#fff',

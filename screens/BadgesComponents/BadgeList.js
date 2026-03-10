@@ -1,8 +1,10 @@
 import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, } from 'react-native';
 
+
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 //Data for the grid
 const featuredBadges = [
@@ -10,6 +12,7 @@ const featuredBadges = [
     { id: 2, image: require('../../assets/silver_badge.png') },
     { id: 3, image: require('../../assets/bronze_badge.png') },
 ];
+
 
 const allBadges = [
     { id: 4, image: require('../../assets/gold.png') },
@@ -22,8 +25,10 @@ const allBadges = [
     { id: 11, image: require('../../assets/bronze_badge.png') },
 ];
 
+
 export default function BadgesList({ navigation }) {
     const insets = useSafeAreaInsets();
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -31,9 +36,11 @@ export default function BadgesList({ navigation }) {
         });
     }, [navigation]);
 
+
     return (
         <SafeAreaView style={styles.safeArea}>
-            <View style={[styles.content, { paddingTop: insets.top + 16 }]}>
+            <View style={styles.content}>
+
 
                 {/* Header */}
                 <View style={styles.header}>
@@ -44,14 +51,13 @@ export default function BadgesList({ navigation }) {
                         <Ionicons name="chevron-back" size={28} />
                     </TouchableOpacity>
 
-                    <Image
-                        source={require('../../assets/images/green-bunny-profile.png')}
-                        style={styles.profile}
-                    />
+
                 </View>
 
-                {/* Featured */}
+
+                {/* Featured Section */}
                 <Text style={styles.sectionTitle}>Featured</Text>
+
 
                 <View style={styles.grid}>
                     {featuredBadges.map((badge) => (
@@ -65,8 +71,10 @@ export default function BadgesList({ navigation }) {
                     ))}
                 </View>
 
-                {/* ALL */}
+
+                {/* All Section */}
                 <Text style={styles.sectionTitle}>All</Text>
+
 
                 <View style={styles.grid}>
                     {allBadges.map((badge) => (
@@ -80,10 +88,12 @@ export default function BadgesList({ navigation }) {
                     ))}
                 </View>
 
+
             </View>
         </SafeAreaView>
     );
 }
+
 
 const styles = StyleSheet.create({
     safeArea: {
@@ -91,10 +101,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
 
+
     content: {
         flex: 1,
         paddingHorizontal: 20,
+        paddingTop: 16,
     },
+
 
     header: {
         flexDirection: 'row',
@@ -103,9 +116,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
 
+
     iconButton: {
         padding: 8,
     },
+
 
     profile: {
         width: 36,
@@ -113,17 +128,20 @@ const styles = StyleSheet.create({
         borderRadius: 18,
     },
 
+
     sectionTitle: {
         fontSize: 22,
         fontWeight: '800',
         marginVertical: 15,
     },
 
+
     grid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
     },
+
 
     badgeWrapper: {
         width: '30%',
@@ -132,6 +150,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+
 
     badgeImage: {
         width: '110%',
