@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Alert, Scro
 import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-//new addition: join group modal popup import
 import JoinGroupModal from './WelcomeScreenComponents/JoinGroupModal';
+import { joinDefaultGroup } from '../services/messaging';
 
 
 export default function WelcomeScreen({ navigation }) {
@@ -150,10 +150,23 @@ export default function WelcomeScreen({ navigation }) {
                     </Text>
                 </TouchableOpacity>
             </View>
-            {/*new addition: user clicks yes on modal, bring them to homescreen, user clicks no, bring them back to sign up */}
             <JoinGroupModal
                 visible={showJoinModal}
-                onYes={() => { setShowJoinModal(false); navigation.navigate('MainTabs'); }}
+                onYes={async () => {
+                    const uid = auth.currentUser?.uid;
+                    if (!uid) {
+                        setShowJoinModal(false);
+                        navigation.navigate('MainTabs');
+                        return;
+                    }
+                    try {
+                        await joinDefaultGroup(uid);
+                        setShowJoinModal(false);
+                        navigation.navigate('MainTabs');
+                    } catch (err) {
+                        Alert.alert('Could not join group', err.message ?? 'Please try again.');
+                    }
+                }}
                 onNo={() => { setShowJoinModal(false); navigation.navigate('MainTabs'); }}
             />
 

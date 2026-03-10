@@ -1,157 +1,300 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Keyboard, Platform } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { auth, db } from '../../firebase';
+import { collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
 
-const mockMessages = [
-    { id: '1', text: 'I took out the trash', time: '17:47', sender: 'me' },
-    { id: '2', text: 'Good bye!', time: '17:47', sender: 'me' },
+function formatTime(timestamp) {
 
-    { id: 'date-1', type: 'date', label: 'Fri, Jul 26' },
-
-    { id: '3', text: 'Good morning!', time: '10:10', sender: 'me' },
-    { id: '4', text: 'Let\'s get another cat', time: '10:10', sender: 'me' },
-    { id: '5', text: '📄 IMG_0475', time: '10:15', sender: 'me' },
-
-    { id: '6', text: '📄 IMG_0481', time: '10:15', sender: 'me' },
-    { id: '7', text: 'When can we pick it up', time: '11:40', sender: 'them' },
-    { id: '8', text: 'We have to go now 😎', time: '11:43', sender: 'me' },
-    { id: '9', text: 'What kind of litter box do we get?\nWith a lid', time: '11:45', sender: 'them' },
-
-    { id: '10', text: 'With a lid', time: '11:45', sender: 'them' },
-    { id: '11', text: 'I think top two are:', time: '11:50', sender: 'me' },
-    { id: '12', text: '📄 IMG_0483', time: '11:51', sender: 'me' },
-    { id: '13', text: '📄 IMG_0484', time: '11:51', sender: 'me' },
-];
+  // if timestamp doesn't exist, reurn empty string
+  if (!timestamp) {
+    return "";
+  }
+  if (!timestamp.toDate) {
+    return "";
+  }
+  // format time
+  const date = timestamp.toDate();
+  return date.toLocaleTimeString( [], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+ 
 
 export default function DirectMessage() {
-    const [message, setMessage] = useState('');
+  const route = useRoute();
+  
+  let channelId = null;
+  let name = null;
+  if (route.params) {
+    channelId = route.params.channelId
+    name = route.params.name;
+  }
 
-    const renderItem = ({ item }) => {
-        // Date Separator
-        if (item.type === 'date') {
-            return (
-                <View style={styles.dateContainer}>
-                    <Text style={styles.dateText}>{item.label}</Text>
-                </View>
-            );
-        }
-        //Logic to add the Ionicon to chat
-        const isImage = item.text.includes('IMG_');
+  let uid = null;
+  if (auth.currentUser) {
+    uid = auth.currentUser.uid;
+  }
 
-        return (
-            <View
-                style={[
-                    styles.messageBubble,
-                    item.sender === 'me' ? styles.myMessage : styles.theirMessage,
-                ]}
-            >
-                {isImage ? (
-                    <View style={styles.imageRow}>
-                        <Ionicons name="image-sharp" size={18} color="#white" style={{ marginRight: 5 }} />
-                        <Text style={styles.messageText}>{item.text.replace('📄 ', '')}</Text>
-                    </View>
-                ) : (
-                    <Text style={styles.messageText}>{item.text}</Text>
-                )}
-                <Text style={styles.time}>{item.time}</Text>
-            </View>
-        );
+  const [message, setMessage] = useState('');
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [messages, setMessages] = useState([]);
+  const [sending, setSending] = useState(false);
+
+  // keyboard 
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvent, (e) => setKeyboardHeight(e.endCoordinates.height));
+    const hideSub = Keyboard.addListener(hideEvent, () => setKeyboardHeight(0));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
     };
+  }, []);
+
+  // message listener
+  useEffect(() => {
+    if (!channelId || !uid) return;
+
+    const messagesRef = collection(db, 'channels', channelId, 'messages');
+    const q = query(
+      messagesRef,
+      orderBy('createdAt', 'asc'),
+      limit(100)
+    );
+    
+    // stores message object in list when doc is updated 
+    const unsub = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map((docSnap) => {
+        const d = docSnap.data();
+        return {
+          id: docSnap.id,
+          text: d.text ?? '',
+          senderId: d.senderId,
+          senderName: d.senderName,
+          createdAt: d.createdAt,
+          sender: d.senderId === uid ? 'me' : 'them',
+        };
+      });
+
+      setMessages(list);
+    }, (err) => {
+      console.warn('DirectMessage snapshot error', err);
+    });
+
+    return () => unsub();
+  }, [channelId, uid]);
+
+  // stores message data 
+  const sendMessage = async () => {
+    const text = message.trim();
+    
+    // prevents send if error occurs
+    if (text === "") {
+      return;
+    }
+    if (!channelId) {
+      return;
+    }
+    if (!uid) {
+      return;
+    }
+    if (sending) {
+      return;
+    }
+    // prevents duplicates 
+    setSending(true);
+    setMessage('');
+
+    try {
+
+      const userRef = doc(db, "users", uid);
+      const userSnap = await getDoc(userRef);
+
+      let senderName = "Me";
+
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+
+        if (userData.firstName) {
+          senderName = userData.firstName;
+        }
+      }
+
+      const messagesRef = collection(
+        db,
+        "channels",
+        channelId,
+        "messages"
+      );
+
+      // adds new message
+      await addDoc(messagesRef, {
+        text: text,
+        senderId: uid,
+        senderName: senderName,
+        createdAt: serverTimestamp()
+      });
+
+      const channelRef = doc(db, "channels", channelId);
+
+      // updates lastest message info
+      await updateDoc(channelRef, {
+        lastMessage: text,
+        lastMessageAt: serverTimestamp()
+      });
+
+    } catch (err) {
+      console.warn('Send message error', err);
+      setMessage(text);
+    } finally {
+      setSending(false);
+    }
+  };
+// renders messages
+  const renderItem = ({ item }) => {
+    // checks if message contain s image
+    const isImage = item.text && item.text.includes('IMG_');
 
     return (
-        <View style={styles.container}>
-            <FlatList
-                data={mockMessages}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.chat}
-            />
-
-            <View style={styles.inputBar}>
-                <TouchableOpacity>
-                    <Ionicons name="add" size={24} color="#007AFF" />
-                </TouchableOpacity>
-
-                <TextInput
-                    placeholder="Message"
-                    value={message}
-                    onChangeText={setMessage}
-                    style={styles.input}
-                />
-
-                <TouchableOpacity>
-                    <Ionicons name="arrow-up-circle" size={28} color="#007AFF" />
-                </TouchableOpacity>
-            </View>
-        </View>
+      <View
+        style={[
+          styles.messageBubble,
+          item.sender === 'me' ? styles.myMessage : styles.theirMessage,
+        ]}
+      >
+        {isImage ? (
+          <View style={styles.imageRow}>
+            <Ionicons name="image-sharp" size={18} color="#333" style={{ marginRight: 5 }} />
+            <Text style={styles.messageText}>{item.text.replace(/^📄\s*/, '')}</Text>
+          </View>
+        ) : (
+          <Text style={styles.messageText}>{item.text}</Text>
+        )}
+        <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
+      </View>
     );
+  };
+
+    // placeholder if channel is not selected
+  if (!channelId) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <Text style={styles.emptyText}>Select a conversation</Text>
+      </View>
+    );
+  }
+
+  // main screen; renders list of messages from firestore
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={messages}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.chat}
+        inverted={false}
+        keyboardShouldPersistTaps="handled"
+      />
+
+      <View style={styles.inputBar}>
+        <TouchableOpacity>
+          <Ionicons name="add" size={24} color="#007AFF" />
+        </TouchableOpacity>
+
+        {/* text message input*/}
+        <TextInput
+          placeholder="Message"
+          value={message}
+          onChangeText={setMessage}
+          style={styles.input}
+          onSubmitEditing={sendMessage}
+          returnKeyType="send"
+          editable={!sending}
+        />
+
+        {/* send button */}
+        <TouchableOpacity onPress={sendMessage} disabled={sending || !message.trim()}>
+          <Ionicons
+            name="arrow-up-circle"
+            size={28}
+            color={message.trim() && !sending ? '#007AFF' : '#ccc'}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ height: keyboardHeight }} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    chat: {
-        padding: 16,
-    },
-    messageBubble: {
-        padding: 10,
-        borderRadius: 15,
-        marginBottom: 8,
-        maxWidth: '80%',
-    },
-    myMessage: {
-        backgroundColor: '#DCF8C6',
-        alignSelf: 'flex-end',
-        borderBottomRightRadius: 2,
-    },
-    theirMessage: {
-        backgroundColor: '#f0f0f0',
-        alignSelf: 'flex-start',
-        borderBottomLeftRadius: 2,
-    },
-    imageRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    messageText: {
-        fontSize: 16,
-        color: '#000',
-    },
-    time: {
-        fontSize: 10,
-        color: '#888',
-        marginTop: 4,
-        alignSelf: 'flex-end',
-    },
-    dateContainer: {
-        alignSelf: 'center',
-        backgroundColor: '#eee',
-        paddingVertical: 4,
-        paddingHorizontal: 12,
-        borderRadius: 12,
-        marginVertical: 16,
-    },
-    dateText: {
-        fontSize: 12,
-        color: '#666',
-    },
-    inputBar: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 10,
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
-        backgroundColor: '#fff',
-    },
-    input: {
-        flex: 1,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 20,
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        marginHorizontal: 10,
-        fontSize: 16,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#888',
+  },
+  chat: {
+    padding: 16,
+    paddingBottom: 8,
+  },
+  messageBubble: {
+    padding: 10,
+    borderRadius: 15,
+    marginBottom: 8,
+    maxWidth: '80%',
+  },
+  myMessage: {
+    backgroundColor: '#DCF8C6',
+    alignSelf: 'flex-end',
+    borderBottomRightRadius: 2,
+  },
+  theirMessage: {
+    backgroundColor: '#f0f0f0',
+    alignSelf: 'flex-start',
+    borderBottomLeftRadius: 2,
+  },
+  imageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  messageText: {
+    fontSize: 16,
+    color: '#000',
+  },
+  time: {
+    fontSize: 10,
+    color: '#888',
+    marginTop: 4,
+    alignSelf: 'flex-end',
+  },
+  inputBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    paddingBottom: 18,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    backgroundColor: '#fff',
+  },
+  input: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginHorizontal: 10,
+    fontSize: 16,
+  },
 });
