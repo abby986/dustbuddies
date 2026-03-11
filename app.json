@@ -4,11 +4,11 @@
     "slug": "DustBuddiesApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/dustbuddies-icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "../assets/dustbuddies-icon.png",
+      "image": "./assets/dustbuddies-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#7c98c7"
     },
@@ -23,14 +23,17 @@
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "foregroundImage": "../assets/dustbuddies-icon.png",
+        "foregroundImage": "./assets/dustbuddies-icon.png",
         "backgroundColor": "#7c98c7"
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
         "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
-      ]
+      ],
+      "package": "com.abby986.DustBuddiesApp"
     },
     "web": {
       "favicon": "./assets/dustbuddies-icon.png"
