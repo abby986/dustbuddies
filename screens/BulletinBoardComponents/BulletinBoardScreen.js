@@ -3,8 +3,8 @@ import { View, Text, TextInput, StyleSheet, Image, ScrollView, TouchableOpacity,
 import Ionicons from '@expo/vector-icons/Ionicons';
 import greenIcon from '../../assets/images/green-bunny-profile.png';
 //new imports for firebase
-import { db } from '../../firebase';
-import { collection, onSnapshot, orderBy, query, doc, updateDoc, increment, arrayUnion, where } from 'firebase/firestore';
+import { db, auth } from '../../firebase';
+import { collection, onSnapshot, orderBy, query, doc, updateDoc, increment, arrayUnion, where, deleteDoc } from 'firebase/firestore';
 
 
 export default function BulletinBoardScreen({ navigation }) {
@@ -12,6 +12,8 @@ export default function BulletinBoardScreen({ navigation }) {
   const [pickerOpen, setPickerOpen] = useState(null); // postId when picking emoji
   const [commentingOn, setCommentingOn] = useState(null);
   const [commentText, setCommentText] = useState('');
+
+  const userId = auth.currentUser?.uid;
 
   useEffect(() => {
     const q = query(
@@ -56,6 +58,12 @@ export default function BulletinBoardScreen({ navigation }) {
     setCommentingOn(null);
   };
 
+  //user can delete post only if it belongs to them
+  const handleDeletePost = async (postId, postUserId) => {
+    if (postUserId !== userId) return; // safety check
+    await deleteDoc(doc(db, "posts", postId));
+  };
+
 
   return (
     <View style={styles.container}>
@@ -92,6 +100,17 @@ export default function BulletinBoardScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.feed}>
         {posts.map(post => (
           <View key={post.id} style={styles.card}>
+
+            {/* delete button */}
+            {post.userId === userId && (
+              <TouchableOpacity
+                onPress={() => handleDeletePost(post.id, post.userId)}
+                style={styles.deleteButton}
+              >
+                <Ionicons name="trash-outline" size={22} color="#db6262" />
+              </TouchableOpacity>
+            )}
+
             <View style={styles.cardHeader}>
               <View style={styles.avatar} />
               <Text style={styles.username}>{post.user || "Anonymous"}:</Text>
@@ -246,7 +265,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
+    position: 'relative',
   },
+
+  deleteButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    padding: 6,
+  },
+
 
   cardHeader: {
     flexDirection: 'row',
