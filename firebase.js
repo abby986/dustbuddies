@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+
 //IDK if we need the getStorage yet, but if we want to add in custom profile photos later on (maybe for the profile page Brock) this is useful
 
 // TODO: Add SDKs for Firebase products that you want to use

@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 //firebase imports
 import { db, auth } from "../firebase";
 import { collection, onSnapshot, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp, doc, getDoc } from "firebase/firestore";
+import PhotoVerification from "./TaskComponents/PhotoVerification";
 
 
 export default function TasksScreen({ navigation }) {
@@ -66,7 +67,7 @@ export default function TasksScreen({ navigation }) {
 
   const myTasks = allTasks.filter(t => t.mine);
 
-  // set up task rotation
+  // sets up task rotation
   function getNextTask(presetTasks, lastTaskName) {
     if (!lastTaskName) {
       return presetTasks[0].name;
@@ -78,7 +79,7 @@ export default function TasksScreen({ navigation }) {
     return presetTasks[nextIndex].name;
   }
 
-  // assiging tassks in rotation
+  // assigings tasks in rotation
   async function assignNextTask(selectedTaskName) {
     console.log("assignNextTask CALLED", selectedTaskName);
     if (!userId) {
@@ -147,6 +148,11 @@ export default function TasksScreen({ navigation }) {
       groupId: groupId,
       task: nextTask,
       date: serverTimestamp(),
+
+      status: "assigned",
+      photoURL: null,
+      completedBy: null,
+      votes: {}
     });
 
     setShowDropdown(false);
@@ -175,8 +181,18 @@ export default function TasksScreen({ navigation }) {
   //clicking task row
   const handleTaskPress = (task) => {
     setSelectedTask(task);
-    task.mine ? setActiveView('MODAL') : setActiveView('VOTE');
+    
+    if (task.raw.status === "pending") {
+      setActiveView("VERIFY");
+    }
+    else if (task.mine) {
+      setActiveView("MODAL");
+    }
+    else {
+      setActiveView("VOTE");
+    }
   };
+
   //addition for profile and back button
 
   return (
@@ -210,6 +226,13 @@ export default function TasksScreen({ navigation }) {
         <VoteTask
           task={selectedTask}
           onVote={() => setActiveView('LIST')}
+          onBack={() => setActiveView('LIST')}
+        />
+      )}
+
+      {activeView === 'VERIFY' && (
+        <PhotoVerification
+          task={selectedTask}
           onBack={() => setActiveView('LIST')}
         />
       )}
