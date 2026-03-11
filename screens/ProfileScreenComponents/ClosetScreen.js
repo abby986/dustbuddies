@@ -1,3 +1,4 @@
+//Ecnountered an error when pushing changes to Github. Clause Code pushed changes when troubleshooting without allowing to manually create a branch.
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';

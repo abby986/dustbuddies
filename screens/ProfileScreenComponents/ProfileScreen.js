@@ -1,3 +1,4 @@
+//Ecnountered an error when pushing changes to Github. Clause Code pushed changes when troubleshooting without allowing to manually create a branch.
 import {
   View,
   Text,
