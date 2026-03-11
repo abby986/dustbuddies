@@ -17,7 +17,7 @@ export default function TaskItems({ task, number, onPress }) {
                 {/*statusbox will be on left along with numbering*/}
                 <View style={styles.leftSide}>
                     <View style={styles.statusBox} />
-                    <Text style={styles.text}>{number}. {task.key}</Text>
+                    <Text style={styles.text}>{number}. {task.name}</Text>
                 </View>
 
                 {/*profile icon from ionicons will be on right, color will match user*/}

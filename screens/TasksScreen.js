@@ -53,7 +53,8 @@ export default function TasksScreen({ navigation }) {
       const list = snap.docs.map((doc) => {
         const data = doc.data();
         return {
-          key: data.task,
+          id: doc.id,
+          name: data.task,
           mine: data.userId === userId,
           raw: data,
         };
@@ -221,7 +222,7 @@ export default function TasksScreen({ navigation }) {
 
           <FlatList
             data={showMyTasks ? myTasks : allTasks}
-            keyExtractor={(item) => item.key}
+            keyExtractor={(item) => item.id}
             renderItem={({ item, index }) => (
               <TaskItems
                 task={item}
