@@ -1,10 +1,36 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-
 import { db, auth } from "../../firebase";
 import { doc, updateDoc, getDoc, increment } from "firebase/firestore";
 
 export default function PhotoVerification({ task, onBack }) {
+
+  useLayoutEffect(() => {
+
+  navigation.setOptions({
+
+    headerLeft: () => (
+
+      <TouchableOpacity
+        onPress={() => {
+
+          if (activeView !== "LIST") {
+            setActiveView("LIST");
+          } else {
+            navigation.goBack();
+          }
+
+        }}
+        style={{ marginLeft: 10 }}
+      >
+        <Text style={{ fontSize: 28 }}>‹</Text>
+      </TouchableOpacity>
+
+    )
+
+  });
+
+}, [navigation, activeView]);
 
   const uid = auth.currentUser?.uid;
 
@@ -89,9 +115,9 @@ export default function PhotoVerification({ task, onBack }) {
         <Text style={styles.buttonText}>Reject</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBack}>
+      {/*<TouchableOpacity onPress={onBack}>
         <Text style={styles.back}>Back</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>*/}
 
     </View>
   );

@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  Button
+  Button,
+  ScrollView
 } from 'react-native';
 
 import { useState, useEffect } from 'react';
@@ -13,7 +14,6 @@ import { auth, db } from '../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
-import greenIcon from '../../assets/images/green-bunny-profile.png';
 
 const itemSources = {
   jersey: require('../../assets/jersey.png'),
@@ -40,19 +40,11 @@ export default function ProfileScreen({ navigation }) {
   }, [navigation]);
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.back}>‹</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Profile')}
-          activeOpacity={0.7}
-        >
-          <Image source={greenIcon} style={styles.profileIcon} />
-        </TouchableOpacity>
-      </View>
-
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
       {userData && (
         <Text style={styles.userName}>
           {userData.firstName}'s DustBuddy
@@ -114,12 +106,13 @@ export default function ProfileScreen({ navigation }) {
           style={styles.badge}
         />
       </View>
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={styles.viewMoreWrap}>
         <Button
           title="View More"
           onPress={() => navigation.navigate('Badges')}
         />
       </View>
+      </ScrollView>
     </View>
 
   );
@@ -132,31 +125,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  header: {
+  scrollView: {
+    flex: 1,
     width: '100%',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  },
+
+  scrollContent: {
+    paddingTop: 16,
+    paddingBottom: 24,
     alignItems: 'center',
-    backgroundColor: '#ffffff',
-  },
-
-  back: {
-    fontSize: 40,
-    fontWeight: '300',
-  },
-
-  profileIcon: {
-    width: 48,
-    height: 48,
-    resizeMode: 'contain',
   },
 
   sideIcons: {
     position: 'absolute',
     right: 16,
-    top: 200,
+    top: 216,
     justifyContent: 'space-between',
     height: 120,
   },
@@ -201,9 +184,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     color: '#363636',
-    marginTop: -20,
-    paddingBottom: 20,
-    paddingTop: -20,
+    marginTop: 0,
+    marginBottom: 12,
+  },
+
+  viewMoreWrap: {
+    minHeight: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   bunnyWrapper: {

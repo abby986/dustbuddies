@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity, Image, Text, ScrollView } from 'react-native';
+import { View, FlatList, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native';
 //import components from their respective files
 import TaskFilter from './TaskComponents/TaskFilter';
 import TaskItems from './TaskComponents/TaskItems';
@@ -7,13 +7,12 @@ import TaskModal from './TaskComponents/TaskModal';
 import SubmitTask from './TaskComponents/SubmitTask';
 import VoteTask from './TaskComponents/VoteTask';
 //import icons
-import greenIcon from '../assets/images/green-bunny-profile.png';
 import { Ionicons } from '@expo/vector-icons';
 //firebase imports
 import { db, auth } from "../firebase";
 import { collection, onSnapshot, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import PhotoVerification from "./TaskComponents/PhotoVerification";
-
+import { useLayoutEffect } from 'react';
 
 export default function TasksScreen({ navigation }) {
   const [showMyTasks, setShowMyTasks] = useState(true);
@@ -35,6 +34,29 @@ export default function TasksScreen({ navigation }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const userId = auth.currentUser?.uid;
+
+  useLayoutEffect(() => {
+
+  navigation.setOptions({
+    headerLeft: () => (
+      <TouchableOpacity
+        onPress={() => {
+
+          if (activeView !== "LIST") {
+            setActiveView("LIST");
+          } else {
+            navigation.goBack();
+          }
+
+        }}
+        style={{ marginLeft: 10 }}
+      >
+        <Text style={{ fontSize: 28 }}>‹</Text>
+      </TouchableOpacity>
+    )
+  });
+
+}, [navigation, activeView]);
 
   //load the preset tasks for the dropdown menu
   useEffect(() => {
@@ -197,21 +219,6 @@ export default function TasksScreen({ navigation }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-
-      {/*new header*/}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.back}>‹</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Profile')}
-          activeOpacity={0.7}
-        >
-          <Image source={greenIcon} style={styles.profileIcon} />
-        </TouchableOpacity>
-      </View>
-
       {/* submit task screen*/}
       {activeView === 'SUBMIT' && (
         <SubmitTask
@@ -299,27 +306,6 @@ export default function TasksScreen({ navigation }) {
 
 //styles
 const styles = StyleSheet.create({
-  header: {
-    width: '100%',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-  },
-
-  back: {
-    fontSize: 40,
-    fontWeight: '300',
-  },
-
-  profileIcon: {
-    width: 48,
-    height: 48,
-    resizeMode: 'contain',
-  },
-
   dropdown: {
     backgroundColor: '#fff',
     borderWidth: 1,

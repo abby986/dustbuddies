@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, ScrollView, TouchableOpacity, } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import greenIcon from '../../assets/images/green-bunny-profile.png';
 //new imports for firebase
 import { db, auth } from '../../firebase';
 import { collection, onSnapshot, orderBy, query, doc, updateDoc, increment, arrayUnion, where, deleteDoc } from 'firebase/firestore';
@@ -67,25 +66,6 @@ export default function BulletinBoardScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        {/*<TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.back}>‹</Text>
-        </TouchableOpacity>*/}
-
-        {/*<TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-            activeOpacity={0.7}
-          >*/}
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })}
-          activeOpacity={0.7}
-        >
-
-          <Image source={greenIcon} style={styles.profileIcon} />
-        </TouchableOpacity>
-      </View>
-
       {/*create post button*/}
       <View style={styles.actionRow}>
         <TouchableOpacity
@@ -227,21 +207,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
 
-  header: {
-    width: '100%',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-  },
-
-  back: {
-    fontSize: 40,
-    fontWeight: '300',
-  },
-
   actionButton: {
     width: 50,
     height: 50,
@@ -280,12 +245,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
-  },
-
-  profileIcon: {
-    width: 48,
-    height: 48,
-    resizeMode: 'contain',
   },
 
   avatar: {

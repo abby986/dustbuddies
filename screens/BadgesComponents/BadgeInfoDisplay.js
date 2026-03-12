@@ -22,11 +22,12 @@ export default function BadgeInfoDisplay({ navigation, route }) {
                     <Ionicons name="chevron-back" size={28} />
                 </TouchableOpacity>
 
-
-                <Image
-                    source={require('../../assets/images/green-bunny-profile.png')}
-                    style={styles.profile}
-                />
+                <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })} activeOpacity={0.7}>
+                    <Image
+                        source={require('../../assets/images/green-bunny-profile.png')}
+                        style={styles.profile}
+                    />
+                </TouchableOpacity>
             </View>
 
 

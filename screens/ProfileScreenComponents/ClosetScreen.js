@@ -50,7 +50,7 @@ export default function ClosetScreen({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('Profile')}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })}
           activeOpacity={0.7}
         >
           <Image source={greenIcon} style={styles.profileIcon} />
