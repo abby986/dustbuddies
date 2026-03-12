@@ -41,11 +41,8 @@ export default function SettingsScreen({ navigation }) {
             </View>
             <View style={styles.spacer}></View>
 
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Account')}>
                 <Text style={styles.buttonText}>Account Info</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Privacy</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
                 <Text style={styles.buttonText}>Accessibility</Text>
