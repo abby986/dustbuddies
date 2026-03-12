@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Image, Animated, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { db, auth } from '../firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, collection, query, where, orderBy } from 'firebase/firestore';
 //import { Ionicons } from '@expo/vector-icons';
 
 //tasks are currently hardcoded, will be replaced dynamically with backend development
-const hardcodedTasks = [
-  { id: '1', title: '1. Do the dishes' },
-  { id: '2', title: '2. Mop floors' },
-];
+//const hardcodedTasks = [
+//{ id: '1', title: '1. Do the dishes' },
+//{ id: '2', title: '2. Mop floors' },
+//];
 
 
 export default function HomeScreen() {
@@ -17,6 +17,7 @@ export default function HomeScreen() {
   const [monsterHp, setMonsterHp] = useState(100);
   const [showDamage, setShowDamage] = useState(false);
   const [prevHp, setPrevHp] = useState(100);
+  const [myTasks, setMyTasks] = useState([]);
 
   useEffect(() => {
     const uid = auth.currentUser?.uid;
@@ -37,6 +38,28 @@ export default function HomeScreen() {
       return () => groupUnsub();
     });
     return () => userUnsub();
+  }, []);
+
+  useEffect(() => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
+    const q = query(
+      collection(db, 'tasks'),
+      where('userId', '==', uid),
+      where('status', '==', 'assigned'),
+      orderBy('date', 'desc')
+    );
+
+    const unsub = onSnapshot(q, (snap) => {
+      const list = snap.docs.map(doc => ({
+        id: doc.id,
+        title: doc.data().task,
+      }));
+      setMyTasks(list);
+    });
+
+    return () => unsub();
   }, []);
 
   const hpPercent = Math.max(0, Math.min(100, monsterHp)) / 100;
@@ -70,17 +93,20 @@ export default function HomeScreen() {
       </Pressable>
       {/* Hardcoded task list */}
       <View style={styles.list}>
-        {hardcodedTasks.map((item) => (
-          <View key={item.id} style={styles.taskRow}>
-            <Text style={styles.taskText}>{item.title}</Text>
-
-            <Image
-              source={require('../assets/images/green-bunny-profile.png')}
-              style={styles.greenIcon}
-              resizeMode='contain'
-            />
-          </View>
-        ))}
+        {myTasks.length === 0 ? (
+          <Text style={styles.emptyText}>You've completed all your tasks!</Text>
+        ) : (
+          myTasks.map((item) => (
+            <View key={item.id} style={styles.taskRow}>
+              <Text style={styles.taskText}>{item.title}</Text>
+              <Image
+                source={require('../assets/images/green-bunny-profile.png')}
+                style={styles.greenIcon}
+                resizeMode='contain'
+              />
+            </View>
+          ))
+        )}
       </View>
     </ScrollView>
   );
