@@ -13,6 +13,7 @@ import { db, auth } from "../firebase";
 import { collection, onSnapshot, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import PhotoVerification from "./TaskComponents/PhotoVerification";
 import { useLayoutEffect } from 'react';
+import { Alert } from "react-native";
 
 export default function TasksScreen({ navigation }) {
   const [showMyTasks, setShowMyTasks] = useState(true);
@@ -203,6 +204,12 @@ export default function TasksScreen({ navigation }) {
   //clicking task row
   const handleTaskPress = (task) => {
     setSelectedTask(task);
+
+    // If another member's task is not yet completed
+    if (!task.mine && !task.raw.photoURL) {
+      Alert.alert("This task has not yet been completed.");
+      return;
+    }
 
     if (task.raw.status === "pending") {
       setActiveView("VERIFY");
