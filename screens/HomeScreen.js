@@ -19,9 +19,9 @@ const itemSources = {
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const [monsterHp, setMonsterHp] = useState(100);
+  const [monsterHp, setMonsterHp] = useState(0);
   const [showDamage, setShowDamage] = useState(false);
-  const [prevHp, setPrevHp] = useState(100);
+  const [prevHp, setPrevHp] = useState(0);
   const [myTasks, setMyTasks] = useState([]);
   const [outfit, setOutfit] = useState(null);
 

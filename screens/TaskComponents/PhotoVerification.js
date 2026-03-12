@@ -1,42 +1,90 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { db, auth } from "../../firebase";
-import { doc, updateDoc, getDoc, increment } from "firebase/firestore";
+import { doc, updateDoc, getDoc, increment, collection, getDocs } from "firebase/firestore";
 
 export default function PhotoVerification({ task, onBack }) {
-
-  useLayoutEffect(() => {
-
-  navigation.setOptions({
-
-    headerLeft: () => (
-
-      <TouchableOpacity
-        onPress={() => {
-
-          if (activeView !== "LIST") {
-            setActiveView("LIST");
-          } else {
-            navigation.goBack();
-          }
-
-        }}
-        style={{ marginLeft: 10 }}
-      >
-        <Text style={{ fontSize: 28 }}>‹</Text>
-      </TouchableOpacity>
-
-    )
-
-  });
-
-}, [navigation, activeView]);
-
   const uid = auth.currentUser?.uid;
+  async function unlockRandomBadge(userId) {
+
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) return;
+
+    const userData = userSnap.data();
+    const unlockedBadges = userData.unlockedBadges || [];
+
+    // get all badges
+    const badgeSnap = await getDocs(collection(db, "badges"));
+
+    const allBadges = badgeSnap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    // remove already unlocked badges
+    const availableBadges = allBadges.filter(
+      badge => !unlockedBadges.some(b => b.name === badge.name)
+    );
+
+    if (availableBadges.length === 0) return;
+
+    // pick random badge
+    const randomBadge =
+      availableBadges[Math.floor(Math.random() * availableBadges.length)];
+
+    const newBadge = {
+      name: randomBadge.name,
+      image: randomBadge.image,
+      unlockedAt: new Date().toISOString()
+    };
+
+    await updateDoc(userRef, {
+      unlockedBadges: [...unlockedBadges, newBadge],
+      newBadgeNotification: newBadge
+    });
+  }
+
+  /*
+    useLayoutEffect(() => {
+
+    navigation.setOptions({
+
+      headerLeft: () => (
+
+        <TouchableOpacity
+          onPress={() => {
+
+            if (activeView !== "LIST") {
+              setActiveView("LIST");
+            } else {
+              navigation.goBack();
+            }
+
+          }}
+          style={{ marginLeft: 10 }}
+        >
+          <Text style={{ fontSize: 28 }}>‹</Text>
+        </TouchableOpacity>
+
+      )
+
+    });
+
+  }, [navigation, activeView]);
+  */
+
 
   async function handleVote(voteValue) {
 
     if (!uid) return;
+
+    //prevent user from voting on their own task
+    if (task.raw.completedBy === uid) {
+      alert("You cannot vote on your own task.");
+      return;
+    }
 
     const taskRef = doc(db, "tasks", task.id);
 
@@ -78,11 +126,16 @@ export default function PhotoVerification({ task, onBack }) {
 
     const majority = 1; //TEMPORARY MAJORITY RULE FOR TESTING
 
-    if (approvalCount >= majority) {
+    if (approvalCount >= majority && taskData.status !== "approved") {
       await updateDoc(taskRef, {
         status: "approved"
       });
-      await updateDoc(doc(db, "groups", taskData.groupId), { monsterHp: increment(-10) });
+      await updateDoc(doc(db, "groups", taskData.groupId), { monsterHp: increment(10) });
+
+      //unlock random badge for individual user
+      if (taskData.completedBy) {
+        await unlockRandomBadge(taskData.completedBy);
+      }
     }
   }
 
