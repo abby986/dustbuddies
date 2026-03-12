@@ -22,6 +22,7 @@ const itemSources = {
   glasses: require('../../assets/glasses.png'),
   wizard_hat: require('../../assets/wizard-hat.png'),
   crown: require('../../assets/crown.png'),
+  special_item: require('../../assets/special-item.png'),
 };
 
 export default function ProfileScreen({ navigation }) {
@@ -75,6 +76,12 @@ export default function ProfileScreen({ navigation }) {
           activeOpacity={0.7}
         >
           <Ionicons name="shirt-outline" size={38} color="#363636" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('QRScanner')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="qr-code-outline" size={38} color="#363636" />
         </TouchableOpacity>
       </View>
 
@@ -161,7 +168,7 @@ const styles = StyleSheet.create({
     right: 16,
     top: 200,
     justifyContent: 'space-between',
-    height: 120,
+    height: 170,
   },
 
   bunnyImage: {
@@ -232,11 +239,11 @@ const styles = StyleSheet.create({
   },
   pantsOverlay: {
     position: 'absolute',
-    width: 180,
-    height: 180,
+    width: 340,
+    height: 350,
     resizeMode: 'contain',
-    top: 200,
-    left: 65,
+    top: 85,
+    left: -10,
   },
 });
 

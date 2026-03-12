@@ -13,6 +13,7 @@ const itemSources = {
   glasses: require('../../assets/glasses.png'),
   wizard_hat: require('../../assets/wizard-hat.png'),
   crown: require('../../assets/crown.png'),
+  special_item: require('../../assets/special-item.png'),
 };
 
 export default function ClosetScreen({ navigation }) {
@@ -20,21 +21,27 @@ export default function ClosetScreen({ navigation }) {
   const [selectedShirt, setSelectedShirt] = useState(null);
   const [selectedHat, setSelectedHat] = useState(null);
   const [selectedPants, setSelectedPants] = useState(null);
+  const [unlockedItems, setUnlockedItems] = useState([]);
 
   useEffect(() => {
     const loadOutfit = async () => {
+      console.log('loadOutfit called');
       const uid = auth.currentUser?.uid;
       if (!uid) return;
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
         const data = userDoc.data();
+        console.log('unlockedItems from Firestore:', data.unlockedItems);
         setSelectedShirt(data.outfit?.shirt || null);
         setSelectedHat(data.outfit?.hat || null);
         setSelectedPants(data.outfit?.pants || null);
+        setUnlockedItems(data.unlockedItems ?? []);
       }
     };
     loadOutfit();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', loadOutfit);
+    return unsubscribe;
+  }, [navigation]);
 
   const saveOutfit = async (shirt, hat, pants) => {
     const uid = auth.currentUser?.uid;
@@ -117,7 +124,11 @@ export default function ClosetScreen({ navigation }) {
         )}
         {selectedTab === 'Pants' && (
           <>
-            {/* add pants TouchableOpacity items here */}
+            {unlockedItems.includes('special_item') && (
+              <TouchableOpacity onPress={() => { setSelectedPants('special_item'); saveOutfit(selectedShirt, selectedHat, 'special_item'); }}>
+                <Image source={itemSources.special_item} style={styles.badgeImage} />
+              </TouchableOpacity>
+            )}
           </>
         )}
       </View>
@@ -194,11 +205,11 @@ const styles = StyleSheet.create({
 
   pantsOverlay: {
     position: 'absolute',
-    width: 200,
-    height: 200,
+    width: 360,
+    height: 350,
     resizeMode: 'contain',
-    top: 200,
-    left: 75,
+    top: 105,
+    left: -5,
   },
 
   badgeContainer: {

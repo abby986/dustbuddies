@@ -9,6 +9,8 @@ import HomeScreen from '../screens/HomeScreen';
 import BadgesScreen from '../screens/BadgesComponents/BadgesScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import AccountScreen from '../screens/AccountScreen';
+import QRScannerScreen from '../screens/QRScannerScreen';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +26,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Badges" component={BadgesScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Account" component={AccountScreen} />
+        <Stack.Screen name="QRScanner" component={QRScannerScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
