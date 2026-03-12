@@ -6,45 +6,46 @@ import { db, auth } from "../../firebase";
 import { doc, updateDoc } from "firebase/firestore";
 
 export default function SubmitTask({ task, onSubmit, onBack }) {
-  
+
   async function openCamera() {
 
-     console.log("CAMERA BUTTON PRESSED");
+    console.log("CAMERA BUTTON PRESSED");
 
-  const permission = await ImagePicker.requestCameraPermissionsAsync();
-  if (permission.status !== "granted") {
-    alert("Camera permission required");
-    return;
-}
-  
-  const result = await ImagePicker.launchCameraAsync({
-    quality: 0.5,
-    allowsEditing: false,
-    base64: true
-  });
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (permission.status !== "granted") {
+      alert("Camera permission required");
+      return;
+    }
 
-  if (result.canceled) return;
-
-  const base64Image = `data:image/jpg;base64,${result.assets[0].base64}`;
-
-  try {
-
-    const taskRef = doc(db, "tasks", task.id);
-
-    await updateDoc(taskRef, {
-      photoURL: base64Image,
-      status: "pending",
-      completedBy: auth.currentUser.uid
+    const result = await ImagePicker.launchCameraAsync({
+      quality: 0.1,
+      allowsEditing: true,
+      base64: true
     });
 
-    onSubmit();
+    if (result.canceled) return;
 
-  } catch (err) {
+    const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
 
-    console.log("Firestore upload error:", err);
-    alert("Failed to upload photo");
+
+    try {
+
+      const taskRef = doc(db, "tasks", task.id);
+
+      await updateDoc(taskRef, {
+        photoURL: base64Image,
+        status: "pending",
+        completedBy: auth.currentUser.uid
+      });
+      alert('Photo submitted! Waiting for your roommates to vote.');
+      onSubmit();
+
+    } catch (err) {
+
+      console.log("Firestore upload error:", err);
+      alert("Failed to upload photo");
     }
-}
+  }
 
   return (
     <View style={styles.container}>

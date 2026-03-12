@@ -1,6 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Pressable, Image, Animated, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { db, auth } from '../firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 //import { Ionicons } from '@expo/vector-icons';
 
 //tasks are currently hardcoded, will be replaced dynamically with backend development
@@ -12,9 +14,35 @@ const hardcodedTasks = [
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const [monsterHp, setMonsterHp] = useState(100);
+  const [showDamage, setShowDamage] = useState(false);
+  const [prevHp, setPrevHp] = useState(100);
+
+  useEffect(() => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+    const userUnsub = onSnapshot(doc(db, 'users', uid), (userSnap) => {
+      const groupId = userSnap.data()?.groupId;
+      if (!groupId) return;
+      const groupUnsub = onSnapshot(doc(db, 'groups', groupId), (groupSnap) => {
+        const hp = groupSnap.data()?.monsterHp ?? 100;
+
+        if (hp < prevHp) {
+          setShowDamage(true);
+          setTimeout(() => setShowDamage(false), 2000);
+        }
+        setPrevHp(hp);
+        setMonsterHp(hp);
+      });
+      return () => groupUnsub();
+    });
+    return () => userUnsub();
+  }, []);
+
+  const hpPercent = Math.max(0, Math.min(100, monsterHp)) / 100;
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Image
         source={require('../assets/images/dustbuddies-logo.png')}
         style={styles.logoImage}
@@ -29,6 +57,13 @@ export default function HomeScreen() {
         style={styles.placeholderImage}
         resizeMode='contain'
       />
+      <Text style={styles.hpLabel}>HP: {monsterHp}/100</Text>
+      <View style={styles.hpBarBackground}>
+        <View style={[styles.hpBarFill, { width: `${hpPercent * 100}%` }]} />
+      </View>
+      {showDamage && (
+        <Animated.Text style={styles.damageText}>-10 HP!</Animated.Text>
+      )}
 
       <Pressable onPress={() => navigation.navigate('Tasks')}>
         <Text style={styles.linkText}>View My Upcoming Tasks</Text>
@@ -47,13 +82,40 @@ export default function HomeScreen() {
           </View>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  hpLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#555',
+    width: '80%',
+    textAlign: 'right',
+    marginTop: 2,
+  },
+  hpBarBackground: {
+    width: '80%',
+    height: 12,
+    backgroundColor: '#ddd',
+    borderRadius: 6,
+    overflow: 'hidden',
+    marginVertical: 10,
+  },
+  hpBarFill: {
+    height: '100%',
+    backgroundColor: '#a1b869',
+    borderRadisu: 6,
+  },
+  damageText: {
+    fontWeight: 'bold',
+    color: '#ff3b30',
+    fontSize: 28,
+    marginTop: -10,
+  },
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     paddingTop: 50,
@@ -83,7 +145,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -30,
+    marginTop: 5,
     backgroundColor: '#7c98c7',
     borderRadius: 15,
     padding: 7,

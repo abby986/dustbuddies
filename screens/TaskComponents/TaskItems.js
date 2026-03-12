@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 //profile icon import
-//import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 //asset image imports
 import greenIcon from '../../assets/images/green-bunny-profile.png';
 import yellowIcon from '../../assets/images/yelow-bunny-profile.png';
@@ -16,7 +16,11 @@ export default function TaskItems({ task, number, onPress }) {
 
                 {/*statusbox will be on left along with numbering*/}
                 <View style={styles.leftSide}>
-                    <View style={styles.statusBox} />
+                    {task.raw?.status === 'pending' || task.raw?.status === 'approved' ? (
+                        <Ionicons name="hourglass-outline" size={20} color="#556dc2" style={{ marginRight: 10 }} />
+                    ) : (
+                        <View style={styles.statusBox} />
+                    )}
                     <Text style={styles.text}>{number}. {task.name}</Text>
                 </View>
 
@@ -66,6 +70,10 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         resizeMode: 'contain',
+    },
+    hourglassIcon: {
+        fontSize: 20,
+        marginRight: 10,
     },
 
 });
