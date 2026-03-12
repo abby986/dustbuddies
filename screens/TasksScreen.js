@@ -59,7 +59,7 @@ export default function TasksScreen({ navigation }) {
           mine: data.userId === userId,
           raw: data,
         };
-      });
+      }).filter(task => task.raw.status !== 'approved');
       setAllTasks(list);
     });
     return () => unsub();
@@ -181,7 +181,7 @@ export default function TasksScreen({ navigation }) {
   //clicking task row
   const handleTaskPress = (task) => {
     setSelectedTask(task);
-    
+
     if (task.raw.status === "pending") {
       setActiveView("VERIFY");
     }

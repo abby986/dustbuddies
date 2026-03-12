@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 
 import { db, auth } from "../../firebase";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, increment } from "firebase/firestore";
 
 export default function PhotoVerification({ task, onBack }) {
 
@@ -24,7 +24,7 @@ export default function PhotoVerification({ task, onBack }) {
     const updatedTask = snap.data();
 
     checkApproval(taskRef, updatedTask);
-
+    alert('Vote submitted!');
     onBack();
   }
 
@@ -47,12 +47,16 @@ export default function PhotoVerification({ task, onBack }) {
     const members = groupSnap.data()?.memberIds || [];
     const memberCount = members.length;
 
-    const majority = Math.floor(memberCount / 2) + 1;
+    //UNCOMMENT THIS SECTION THIS IS THE MAJORITY VOTE RULE. COMMENTING OUT FOR TESTING PURPOSES FOR NOW
+    //const majority = Math.floor(memberCount / 2) + 1;
+
+    const majority = 1; //TEMPORARY MAJORITY RULE FOR TESTING
 
     if (approvalCount >= majority) {
       await updateDoc(taskRef, {
         status: "approved"
       });
+      await updateDoc(doc(db, "groups", taskData.groupId), { monsterHp: increment(-10) });
     }
   }
 
