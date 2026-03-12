@@ -35,17 +35,18 @@ export default function QRScannerScreen({ navigation }) {
         const userSnap = await getDoc(userRef);
         //console.log('Got snap:', userSnap.exists());
         const unlockedItems = userSnap.data()?.unlockedItems ?? [];
+        const goBack = () => navigation.canGoBack() ? navigation.goBack() : navigation.navigate('MainTabs');
 
         if (unlockedItems.includes(itemKey)) {
             Alert.alert("Already Unlocked", "You already have this item!", [
-                { text: 'OK', onPress: () => navigation.goBack() },
+                { text: 'OK', onPress: goBack },
             ]);
             return;
         }
         try {
             await updateDoc(userRef, { unlockedItems: arrayUnion(itemKey) });
             Alert.alert('Item Unlocked!', `You unlocked: ${itemKey}`, [
-                { text: 'OK', onPress: () => navigation.goBack() },
+                { text: 'OK', onPress: goBack },
             ]);
         } catch (error) {
             //console.log('Firestore error:', error);
