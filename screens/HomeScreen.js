@@ -18,6 +18,7 @@ const itemSources = {
   glasses: require('../assets/glasses.png'),
   wizard_hat: require('../assets/wizard-hat.png'),
   crown: require('../assets/crown.png'),
+  special_item: require('../assets/special-item.png'),
 };
 
 export default function HomeScreen() {
@@ -267,11 +268,11 @@ const styles = StyleSheet.create({
   },
   miniPantsOverlay: {
     position: 'absolute',
-    width: 56,
-    height: 56,
+    width: 117,
+    height: 117,
     resizeMode: 'contain',
-    top: 63,
-    left: 20,
+    top: 40,
+    left: 2,
   },
   monsterImage: {
     width: 220,
