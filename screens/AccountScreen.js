@@ -72,7 +72,13 @@ export default function AccountScreen({ navigation }) {
                     <Text style={styles.back}>‹</Text>
                 </TouchableOpacity>
                 <Text style={styles.title}>Account Info</Text>
-                <View style={{ width: 20 }} />
+                <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })} activeOpacity={0.7}>
+                    <Image
+                        source={require('../assets/images/green-bunny-profile.png')}
+                        style={styles.profileIcon}
+                        resizeMode="contain"
+                    />
+                </TouchableOpacity>
             </View>
             <Text style={styles.sectionTitle}> Personal Information</Text>
             <View style={styles.infoCard}>
@@ -166,6 +172,10 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 30,
         fontWeight: 'bold',
+    },
+    profileIcon: {
+        width: 40,
+        height: 40,
     },
     sectionTitle: {
         fontSize: 16,

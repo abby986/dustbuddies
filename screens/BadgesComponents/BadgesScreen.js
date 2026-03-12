@@ -95,6 +95,13 @@ export default function BadgesScreen({ navigation }) {
                         <TouchableOpacity onPress={() => setSelectedBadge(null)}>
                             <Ionicons name="chevron-back" size={28} />
                         </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })} activeOpacity={0.7}>
+                            <Image
+                                source={require('../../assets/images/green-bunny-profile.png')}
+                                style={styles.profileIcon}
+                                resizeMode="contain"
+                            />
+                        </TouchableOpacity>
                     </View>
 
                     {/* Badge Image */}
@@ -148,6 +155,13 @@ export default function BadgesScreen({ navigation }) {
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Ionicons name="chevron-back" size={28} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })} activeOpacity={0.7}>
+                        <Image
+                            source={require('../../assets/images/green-bunny-profile.png')}
+                            style={styles.profileIcon}
+                            resizeMode="contain"
+                        />
                     </TouchableOpacity>
                 </View>
 
@@ -210,7 +224,12 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         marginVertical: 10,
+    },
+    profileIcon: {
+        width: 40,
+        height: 40,
     },
 
     sectionTitle: {

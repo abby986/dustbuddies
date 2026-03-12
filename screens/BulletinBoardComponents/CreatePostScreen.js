@@ -101,9 +101,18 @@ export default function CreatePostScreen({ navigation }) {
 
         <Text style={styles.title}>New Post</Text>
 
-        <TouchableOpacity onPress={handlePost}>
-          <Text style={styles.postButton}>Post</Text>
-        </TouchableOpacity>
+        <View style={styles.headerRight}>
+          <TouchableOpacity onPress={handlePost}>
+            <Text style={styles.postButton}>Post</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })} style={styles.profileIconWrap} activeOpacity={0.7}>
+            <Image
+              source={require('../../assets/images/green-bunny-profile.png')}
+              style={styles.profileIcon}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <TextInput
@@ -157,6 +166,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  profileIconWrap: {
+    marginLeft: 8,
+  },
+  profileIcon: {
+    width: 40,
+    height: 40,
+  },
   postButton: {
     color: '#5B6FD6',
     fontWeight: 'bold',

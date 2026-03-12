@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, Touchable } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, Touchable, Image } from 'react-native';
 
 export default function SettingsScreen({ navigation }) {
     const [pushNotifications, setPushNotifications] = useState(false);
@@ -14,8 +14,13 @@ export default function SettingsScreen({ navigation }) {
                     <Text style={styles.back}>‹</Text>
                 </TouchableOpacity>
                 <Text style={styles.title}>Settings</Text>
-                <View style={{ width: 19 }} // stupid amount of trial and error to get this centered
-                />
+                <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })} activeOpacity={0.7}>
+                    <Image
+                        source={require('../assets/images/green-bunny-profile.png')}
+                        style={styles.profileIcon}
+                        resizeMode="contain"
+                    />
+                </TouchableOpacity>
             </View>
             <Text style={styles.subtitle}>Quick Access Settings</Text>
             <View style={styles.settingRow}>
@@ -72,6 +77,10 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: 'bold',
+    },
+    profileIcon: {
+        width: 40,
+        height: 40,
     },
     subtitle: {
         fontSize: 18,
