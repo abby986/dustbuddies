@@ -25,8 +25,21 @@ export default function BottomTabNavigator() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={{
+      screenOptions={({ navigation }) => ({
         headerShown: true,
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{ marginRight: 15 }}
+            activeOpacity={0.7}
+          >
+            <Image
+              source={require('../assets/images/green-bunny-profile.png')}
+              style={{ width: 36, height: 36, borderRadius: 18 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        ),
         tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: '#556DC2',
@@ -35,7 +48,7 @@ export default function BottomTabNavigator() {
           paddingTop: 10,
 
         },
-      }}
+      })}
     >
 
       <Tab.Screen name="Bulletin Board" component={BulletinBoardScreen} options={{

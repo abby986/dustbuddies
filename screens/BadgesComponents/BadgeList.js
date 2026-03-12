@@ -50,8 +50,13 @@ export default function BadgesList({ navigation }) {
                     >
                         <Ionicons name="chevron-back" size={28} />
                     </TouchableOpacity>
-
-
+                    <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })} activeOpacity={0.7}>
+                        <Image
+                            source={require('../../assets/images/green-bunny-profile.png')}
+                            style={styles.profileIcon}
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity>
                 </View>
 
 
@@ -121,6 +126,10 @@ const styles = StyleSheet.create({
         padding: 8,
     },
 
+    profileIcon: {
+        width: 40,
+        height: 40,
+    },
 
     profile: {
         width: 36,
