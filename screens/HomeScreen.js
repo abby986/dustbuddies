@@ -12,9 +12,9 @@ import { doc, onSnapshot, collection, query, where, orderBy } from 'firebase/fir
 //];
 
 const itemSources = {
-  jersey: require('../assets/jersey.png'),
-  blue_shirt: require('../assets/blue_shirt.png'),
-  green_shirt: require('../assets/green_shirt.png'),
+  vest: require('../assets/rabbit-blue-vest.png'),
+  pink_skirt: require('../assets/rabbit-pink-skirt.png'),
+  red_bow: require('../assets/rabbit-bow.png'),
 };
 
 export default function HomeScreen() {
@@ -248,11 +248,11 @@ const styles = StyleSheet.create({
   },
   miniClothingOverlay: {
     position: 'absolute',
-    width: 56,
-    height: 56,
+    width: 84,
+    height: 84,
     resizeMode: 'contain',
-    top: 50,
-    left: 32,
+    top: 42,
+    left: 19,
   },
   miniHatOverlay: {
     position: 'absolute',
