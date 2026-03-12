@@ -10,10 +10,13 @@ const itemSources = {
   vest: require('../../assets/rabbit-blue-vest.png'),
   pink_skirt: require('../../assets/rabbit-pink-skirt.png'),
   red_bow: require('../../assets/rabbit-bow.png'),
+  glasses: require('../../assets/glasses.png'),
+  wizard_hat: require('../../assets/wizard-hat.png'),
+  crown: require('../../assets/crown.png'),
 };
 
 export default function ClosetScreen({ navigation }) {
-  const [selectedTab, setSelectedTab] = useState('Shirts');
+  const [selectedTab, setSelectedTab] = useState('Clothes');
   const [selectedShirt, setSelectedShirt] = useState(null);
   const [selectedHat, setSelectedHat] = useState(null);
   const [selectedPants, setSelectedPants] = useState(null);
@@ -72,7 +75,7 @@ export default function ClosetScreen({ navigation }) {
 
 
       <View style={styles.tabBar}>
-        {['Shirts', 'Hats', 'Pants'].map(tab => (
+        {['Clothes', 'Accessories', 'Pants'].map(tab => (
           <TouchableOpacity
             key={tab}
             style={[styles.tabButton, selectedTab === tab && styles.tabButtonActive]}
@@ -86,7 +89,7 @@ export default function ClosetScreen({ navigation }) {
 
       </View>
       <View style={styles.badgeContainer}>
-        {selectedTab === 'Shirts' && (
+        {selectedTab === 'Clothes' && (
           <>
             <TouchableOpacity onPress={() => { setSelectedShirt('vest'); saveOutfit('vest', selectedHat, selectedPants); }}>
               <Image source={itemSources.vest} style={styles.badgeImage} />
@@ -99,9 +102,17 @@ export default function ClosetScreen({ navigation }) {
             </TouchableOpacity>
           </>
         )}
-        {selectedTab === 'Hats' && (
+        {selectedTab === 'Accessories' && (
           <>
-            {/* add hat TouchableOpacity items here */}
+            {/* <TouchableOpacity onPress={() => { setSelectedHat('glasses'); saveOutfit(selectedShirt, 'glasses', selectedPants); }}>
+              <Image source={itemSources.glasses} style={styles.badgeImage} />
+            </TouchableOpacity>*/}
+            <TouchableOpacity onPress={() => { setSelectedHat('wizard_hat'); saveOutfit(selectedShirt, 'wizard_hat', selectedPants); }}>
+              <Image source={itemSources.wizard_hat} style={styles.badgeImage} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { setSelectedHat('crown'); saveOutfit(selectedShirt, 'crown', selectedPants); }}>
+              <Image source={itemSources.crown} style={styles.badgeImage} />
+            </TouchableOpacity>
           </>
         )}
         {selectedTab === 'Pants' && (
@@ -174,11 +185,11 @@ const styles = StyleSheet.create({
   },
   hatOverlay: {
     position: 'absolute',
-    width: 180,
-    height: 180,
+    width: 200,
+    height: 200,
     resizeMode: 'contain',
     top: 10,
-    left: 85,
+    left: 74,
   },
 
   pantsOverlay: {

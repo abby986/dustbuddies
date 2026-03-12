@@ -19,6 +19,9 @@ const itemSources = {
   vest: require('../../assets/rabbit-blue-vest.png'),
   pink_skirt: require('../../assets/rabbit-pink-skirt.png'),
   red_bow: require('../../assets/rabbit-bow.png'),
+  glasses: require('../../assets/glasses.png'),
+  wizard_hat: require('../../assets/wizard-hat.png'),
+  crown: require('../../assets/crown.png'),
 };
 
 export default function ProfileScreen({ navigation }) {
@@ -221,11 +224,11 @@ const styles = StyleSheet.create({
   },
   hatOverlay: {
     position: 'absolute',
-    width: 160,
-    height: 160,
+    width: 200,
+    height: 200,
     resizeMode: 'contain',
-    top: 10,
-    left: 75,
+    top: 5,
+    left: 58,
   },
   pantsOverlay: {
     position: 'absolute',

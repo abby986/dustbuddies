@@ -15,6 +15,9 @@ const itemSources = {
   vest: require('../assets/rabbit-blue-vest.png'),
   pink_skirt: require('../assets/rabbit-pink-skirt.png'),
   red_bow: require('../assets/rabbit-bow.png'),
+  glasses: require('../assets/glasses.png'),
+  wizard_hat: require('../assets/wizard-hat.png'),
+  crown: require('../assets/crown.png'),
 };
 
 export default function HomeScreen() {
@@ -256,11 +259,11 @@ const styles = StyleSheet.create({
   },
   miniHatOverlay: {
     position: 'absolute',
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
     resizeMode: 'contain',
-    top: 3,
-    left: 23,
+    top: 6,
+    left: 30,
   },
   miniPantsOverlay: {
     position: 'absolute',
