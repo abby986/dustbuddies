@@ -11,6 +11,11 @@ import { doc, onSnapshot, collection, query, where, orderBy } from 'firebase/fir
 //{ id: '2', title: '2. Mop floors' },
 //];
 
+const itemSources = {
+  jersey: require('../assets/jersey.png'),
+  blue_shirt: require('../assets/blue_shirt.png'),
+  green_shirt: require('../assets/green_shirt.png'),
+};
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -18,16 +23,19 @@ export default function HomeScreen() {
   const [showDamage, setShowDamage] = useState(false);
   const [prevHp, setPrevHp] = useState(100);
   const [myTasks, setMyTasks] = useState([]);
+  const [outfit, setOutfit] = useState(null);
 
   useEffect(() => {
     const uid = auth.currentUser?.uid;
     if (!uid) return;
     const userUnsub = onSnapshot(doc(db, 'users', uid), (userSnap) => {
-      const groupId = userSnap.data()?.groupId;
+      const data = userSnap.data();
+      setOutfit(data?.outfit ?? null);
+
+      const groupId = data?.groupId;
       if (!groupId) return;
       const groupUnsub = onSnapshot(doc(db, 'groups', groupId), (groupSnap) => {
         const hp = groupSnap.data()?.monsterHp ?? 100;
-
         if (hp < prevHp) {
           setShowDamage(true);
           setTimeout(() => setShowDamage(false), 2000);
@@ -75,11 +83,28 @@ export default function HomeScreen() {
       <Text style={styles.title}>Welcome Home!</Text>
       {/* Link to send the user to Tasks Page*/}
 
-      <Image
-        source={require('../assets/images/homeart2.png')}
-        style={styles.placeholderImage}
-        resizeMode='contain'
-      />
+      <View style={styles.batlleScene}>
+        <Image
+          source={require('../assets/images/monster-full-health.png')}
+          style={styles.monsterImage}
+        />
+        <View style={styles.miniBunnyWrapper}>
+          <Image
+            source={require('../assets/rabbit_final_copy_3.png')}
+            style={styles.miniBunnyImage}
+          />
+          {outfit?.shirt && (
+            <Image source={itemSources[outfit.shirt]} style={styles.miniClothingOverlay} />
+          )}
+          {outfit?.hat && (
+            <Image source={itemSources[outfit.hat]} style={styles.miniHatOverlay} />
+          )}
+          {outfit?.pants && (
+            <Image source={itemSources[outfit.pants]} style={styles.miniPantsOverlay} />
+          )}
+        </View>
+      </View>
+
       <Text style={styles.hpLabel}>HP: {monsterHp}/100</Text>
       <View style={styles.hpBarBackground}>
         <View style={[styles.hpBarFill, { width: `${hpPercent * 100}%` }]} />
@@ -160,10 +185,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     padding: 10,
   },
-  placeholderImage: {
-    width: 400,
-    marginBottom: 5,
-  },
+
   linkText: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -207,4 +229,52 @@ const styles = StyleSheet.create({
     height: 28,
     marginLeft: 20,
   },
+  battleScene: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    width: '80%',
+    marginTop: 10,
+  },
+  miniBunnyWrapper: {
+    width: 100,
+    height: 100,
+    position: 'relative',
+  },
+  miniBunnyImage: {
+    width: 120,
+    height: 120,
+    resizeMode: 'contain',
+  },
+  miniClothingOverlay: {
+    position: 'absolute',
+    width: 56,
+    height: 56,
+    resizeMode: 'contain',
+    top: 50,
+    left: 32,
+  },
+  miniHatOverlay: {
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
+    top: 3,
+    left: 23,
+  },
+  miniPantsOverlay: {
+    position: 'absolute',
+    width: 56,
+    height: 56,
+    resizeMode: 'contain',
+    top: 63,
+    left: 20,
+  },
+  monsterImage: {
+    width: 220,
+    height: 220,
+    marginLeft: 150,
+    marginBottom: -50,
+  }
+
 });
