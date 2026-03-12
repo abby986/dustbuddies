@@ -7,9 +7,9 @@ import { auth, db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const itemSources = {
-  jersey: require('../../assets/jersey.png'),
-  blue_shirt: require('../../assets/blue_shirt.png'),
-  green_shirt: require('../../assets/green_shirt.png'),
+  vest: require('../../assets/rabbit-blue-vest.png'),
+  pink_skirt: require('../../assets/rabbit-pink-skirt.png'),
+  red_bow: require('../../assets/rabbit-bow.png'),
 };
 
 export default function ClosetScreen({ navigation }) {
@@ -88,14 +88,14 @@ export default function ClosetScreen({ navigation }) {
       <View style={styles.badgeContainer}>
         {selectedTab === 'Shirts' && (
           <>
-            <TouchableOpacity onPress={() => { setSelectedShirt('jersey'); saveOutfit('jersey', selectedHat, selectedPants); }}>
-              <Image source={itemSources.jersey} style={styles.badgeImage} />
+            <TouchableOpacity onPress={() => { setSelectedShirt('vest'); saveOutfit('vest', selectedHat, selectedPants); }}>
+              <Image source={itemSources.vest} style={styles.badgeImage} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setSelectedShirt('blue_shirt'); saveOutfit('blue_shirt', selectedHat, selectedPants); }}>
-              <Image source={itemSources.blue_shirt} style={styles.badgeImage} />
+            <TouchableOpacity onPress={() => { setSelectedShirt('pink_skirt'); saveOutfit('pink_skirt', selectedHat, selectedPants); }}>
+              <Image source={itemSources.pink_skirt} style={styles.badgeImage} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setSelectedShirt('green_shirt'); saveOutfit('green_shirt', selectedHat, selectedPants); }}>
-              <Image source={itemSources.green_shirt} style={styles.badgeImage} />
+            <TouchableOpacity onPress={() => { setSelectedShirt('red_bow'); saveOutfit('red_bow', selectedHat, selectedPants); }}>
+              <Image source={itemSources.red_bow} style={styles.badgeImage} />
             </TouchableOpacity>
           </>
         )}
@@ -166,11 +166,11 @@ const styles = StyleSheet.create({
   },
   clothingOverlay: {
     position: 'absolute',
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
     resizeMode: 'contain',
-    top: 140,
-    left: 75,
+    top: 122,
+    left: 52,
   },
   hatOverlay: {
     position: 'absolute',

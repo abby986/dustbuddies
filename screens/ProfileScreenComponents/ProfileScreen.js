@@ -16,9 +16,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import greenIcon from '../../assets/images/green-bunny-profile.png';
 
 const itemSources = {
-  jersey: require('../../assets/jersey.png'),
-  blue_shirt: require('../../assets/blue_shirt.png'),
-  green_shirt: require('../../assets/green_shirt.png'),
+  vest: require('../../assets/rabbit-blue-vest.png'),
+  pink_skirt: require('../../assets/rabbit-pink-skirt.png'),
+  red_bow: require('../../assets/rabbit-bow.png'),
 };
 
 export default function ProfileScreen({ navigation }) {
@@ -213,11 +213,11 @@ const styles = StyleSheet.create({
   },
   clothingOverlay: {
     position: 'absolute',
-    width: 180,
-    height: 180,
+    width: 250,
+    height: 250,
     resizeMode: 'contain',
-    top: 130,
-    left: 65,
+    top: 106,
+    left: 36,
   },
   hatOverlay: {
     position: 'absolute',
