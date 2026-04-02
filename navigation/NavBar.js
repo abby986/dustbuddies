@@ -41,6 +41,8 @@ export default function BottomTabNavigator() {
           </TouchableOpacity>
         ),
         tabBarShowLabel: false,
+        tabBarActiveTintColor: '#a1b869',
+        tabBarInactiveTintColor: '#ffffff',
         tabBarStyle: {
           backgroundColor: '#556DC2',
           height: 70,
@@ -52,54 +54,54 @@ export default function BottomTabNavigator() {
     >
 
       <Tab.Screen name="Bulletin Board" component={BulletinBoardScreen} options={{
-        tabBarIcon: ({ focused }) => (
+        tabBarIcon: ({ color, focused }) => (
           <FontAwesome
             name="sticky-note-o"
-            size={30}
-            color="#ffffff"
+            size={focused ? 36 : 32}
+            color={color}
 
           />
         ),
       }}
       />
       <Tab.Screen name="Tasks" component={TasksScreen} options={{
-        tabBarIcon: ({ focused }) => (
+        tabBarIcon: ({ color, focused }) => (
           <MaterialCommunityIcons
             name="broom"
-            size={32}
-            color="#ffffff"
+            size={focused ? 36 : 32}
+            color={color}
           />
         ),
       }}
       />
       <Tab.Screen name="Home" component={HomeScreen} options={{
-        tabBarIcon: ({ focused }) => (
+        tabBarIcon: ({ color, focused }) => (
           <Feather
             name="home"
-            size={32}
-            color="#ffffff"
+            size={focused ? 36 : 32}
+            color={color}
           />
         ),
       }}
       />
       <Tab.Screen name="Messages" component={MessagesScreen} options={{
-        tabBarIcon: ({ focused }) => (
+        tabBarIcon: ({ color, focused }) => (
           <Feather
             name="message-circle"
-            size={32}
-            color="#ffffff"
+            size={focused ? 36 : 32}
+            color={color}
           />
         ),
       }}
       />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{
-        tabBarIcon: ({ focused }) => (
+        tabBarIcon: ({ color, focused }) => (
           <Image
             source={profileIcon}
             style={{
-              width: 34,
-              height: 34,
-              tintColor: '#ffffff',
+              width: focused ? 36 : 32,
+              height: focused ? 36 : 32,
+              tintColor: color,
             }}
           />
         ),
