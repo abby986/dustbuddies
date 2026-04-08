@@ -45,10 +45,16 @@ export default function BottomTabNavigator() {
         tabBarInactiveTintColor: '#ffffff',
         tabBarStyle: {
           backgroundColor: '#556DC2',
-          height: 70,
-          paddingBottom: 10,
-          paddingTop: 10,
-
+          height: 80,
+        },
+        tabBarItemStyle: {
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+        tabBarIconStyle: {
+          width: 40,
+          height: 40,
+          overflow: 'visible',
         },
       })}
     >
