@@ -101,9 +101,7 @@ export default function ClosetScreen({ navigation }) {
             <TouchableOpacity onPress={() => { setSelectedShirt('vest'); saveOutfit('vest', selectedHat, selectedPants); }}>
               <Image source={itemSources.vest} style={styles.badgeImage} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setSelectedShirt('pink_skirt'); saveOutfit('pink_skirt', selectedHat, selectedPants); }}>
-              <Image source={itemSources.pink_skirt} style={styles.badgeImage} />
-            </TouchableOpacity>
+    
             <TouchableOpacity onPress={() => { setSelectedShirt('red_bow'); saveOutfit('red_bow', selectedHat, selectedPants); }}>
               <Image source={itemSources.red_bow} style={styles.badgeImage} />
             </TouchableOpacity>
@@ -124,6 +122,9 @@ export default function ClosetScreen({ navigation }) {
         )}
         {selectedTab === 'Pants' && (
           <>
+               <TouchableOpacity onPress={() => { setSelectedPants('pink_skirt'); saveOutfit(selectedShirt, selectedHat,'pink_skirt'); }}>
+              <Image source={itemSources.pink_skirt} style={styles.badgeImage} />
+            </TouchableOpacity>
             {unlockedItems.includes('special_item') && (
               <TouchableOpacity onPress={() => { setSelectedPants('special_item'); saveOutfit(selectedShirt, selectedHat, 'special_item'); }}>
                 <Image source={itemSources.special_item} style={styles.badgeImage} />
