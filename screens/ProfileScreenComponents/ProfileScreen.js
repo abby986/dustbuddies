@@ -12,6 +12,7 @@ import {
 import { useState, useEffect, useRef } from 'react';
 import { auth, db } from '../../firebase';
 import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -40,6 +41,7 @@ const itemSources = {
 };
 
 export default function ProfileScreen({ navigation }) {
+
   const [userData, setUserData] = useState(null);
   const [newBadge, setNewBadge] = useState(null);
 
@@ -49,42 +51,79 @@ export default function ProfileScreen({ navigation }) {
 
   const featuredBadges = userData?.featuredBadges || [];
 
-  //FeatureBadge Test
+  //FeatureBadge Test and Logout Info
+  useEffect(() => {
+    let unsubscribeSnapshot = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+
+      if (!user) {
+        setUserData(null);
+        return;
+      }
+
+      const userRef = doc(db, 'users', user.uid);
+
+      unsubscribeSnapshot = onSnapshot(
+        userRef,
+        (docSnap) => {
+          if (!docSnap.exists()) return;
+          setUserData(docSnap.data());
+        },
+        (error) => {
+          // ignore logout condition errors
+          if (error.code === 'permission-denied') return;
+          console.log('Firestore error:', error);
+        }
+      );
+    });
+
+    // cleanup
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
+  }, []);
+
+  /*
   useEffect(() => {
     const uid = auth.currentUser?.uid;
-    if (!uid) return;
+    if (!user) {
+      return null; // or a loading / empty screen
+    }
 
 
     const userRef = doc(db, 'users', uid);
 
 
-    const unsubscribe = onSnapshot(userRef, async (docSnap) => {
-      if (!docSnap.exists()) return;
+    const unsubscribe = onSnapshot(
+      userRef,
+      async (docSnap) => {
+        if (!docSnap.exists()) return;
+        const data = docSnap.data();
+        setUserData(data);
 
-
-      const data = docSnap.data();
-      setUserData(data);
-
-      // check for new badge notification
-      if (data.newBadgeNotification) {
-
-        setNewBadge(data.newBadgeNotification);
-
-        // clear notification so it doesn't trigger again
-        await updateDoc(userRef, {
-          newBadgeNotification: null
-        });
-
-        setTimeout(() => {
-          setNewBadge(null);
-        }, 9000);
+        if (data.newBadgeNotification) {
+          setNewBadge(data.newBadgeNotification);
+          await updateDoc(userRef, { newBadgeNotification: null });
+          setTimeout(() => setNewBadge(null), 9000);
+        }
+      },
+      (error) => {
+        if (error.code === 'permission-denied') return;
+        console.error('Snapshot error:', error);
       }
-
-    });
+    );
 
     return () => unsubscribe();
 
   }, []);
+*/
 
   /*
     useEffect(() => {

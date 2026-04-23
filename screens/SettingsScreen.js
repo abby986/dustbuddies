@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, Touchable, Image } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, Touchable, Image, Alert } from 'react-native';
+
+import { CommonActions } from '@react-navigation/native';
+import { getAuth, signOut } from 'firebase/auth';
 
 export default function SettingsScreen({ navigation }) {
     const [pushNotifications, setPushNotifications] = useState(false);
     const [cameraAccess, setCameraAccess] = useState(false);
     const [automaticUpdates, setAutomaticUpdates] = useState(false);
+
+    //Logout Button
+    const handleLogout = () => {
+        navigation.navigate('Welcome');
+    };
 
     return (
 
@@ -51,6 +59,10 @@ export default function SettingsScreen({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
                 <Text style={styles.buttonText}>Accessibility</Text>
+            </TouchableOpacity>
+            <View style={styles.spacer} />
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                <Text style={styles.logoutButtonText}>Log Out</Text>
             </TouchableOpacity>
         </View >
     )
@@ -113,6 +125,19 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
     },
     buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        textAlign: 'center',
+        fontWeight: 'bold',
+    },
+    logoutButton: {
+        backgroundColor: '#DB6262',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 15,
+        marginHorizontal: 20,
+    },
+    logoutButtonText: {
         color: '#fff',
         fontSize: 16,
         textAlign: 'center',
