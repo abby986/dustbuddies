@@ -78,7 +78,13 @@ export default function BulletinBoardScreen({ navigation }) {
 
       {/* bulletin feed */}
       <ScrollView contentContainerStyle={styles.feed}>
-        {posts.map(post => (
+        {posts.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="chatbubbles-outline" size={48} color="#ccc" />
+            <Text style={styles.emptyText}>Be the first to create a post!</Text>
+          </View>
+          ) : (
+          posts.map(post => (
           <View key={post.id} style={styles.card}>
 
             {/* delete button */}
@@ -107,46 +113,52 @@ export default function BulletinBoardScreen({ navigation }) {
               {/* reactions on left */}
               <View style={styles.reactionLeft}>
                 {Object.entries(post.reactions || {}).map(([emoji, count]) => (
-                  <TouchableOpacity key={emoji} onPress={() => handleReaction(post.id, emoji)}>
+                  <TouchableOpacity
+                    key={emoji}
+                    onPress={() => handleReaction(post.id, emoji)}
+                  >
                     <Text style={styles.reactionText}>{emoji} {count}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
-              {/* action column,comments on right */}
+              {/* action column, comments on right */}
               <View style={styles.actionColumn}>
-                <TouchableOpacity onPress={() => setPickerOpen(post.id)}>
+                {/* emoji picker toggle */}
+                <TouchableOpacity
+                  onPress={() =>
+                    setPickerOpen(prev => (prev === post.id ? null : post.id))
+                  }
+                >
                   <Text style={styles.addReaction}>➕</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => setCommentingOn(post.id)}>
+                {/* comment toggle */}
+                <TouchableOpacity
+                  onPress={() =>
+                    setCommentingOn(prev => (prev === post.id ? null : post.id))
+                  }
+                >
                   <Ionicons name="chatbubbles-outline" size={24} color="#000" />
                 </TouchableOpacity>
               </View>
-            </View>
-
+            </View> 
 
             {/* hidden emoji input */}
             {pickerOpen === post.id && (
-              <TextInput
-                autoFocus
-                style={{ height: 0, width: 0 }}
-                maxLength={2} // prevents multiple characters
-                onChangeText={(emoji) => {
-                  // Close picker immediately
-                  setPickerOpen(null);
-
-                  // reject empty input
-                  if (!emoji) return;
-
-                  // reject non-emoji input
-                  const isEmoji = /\p{Emoji}/u.test(emoji);
-                  if (!isEmoji) return;
-
-                  // accept only one emoji
-                  handleReaction(post.id, emoji);
-                }}
-              />
+              <View style={styles.emojiPicker}>
+                {['👍', '❤️', '😂', '‼️', '😢'].map(emoji => (
+                  <TouchableOpacity
+                    key={emoji}
+                    onPress={() => {
+                      handleReaction(post.id, emoji);
+                      setPickerOpen(null); // closes after selection
+                    }}
+                  >
+                    <Text style={styles.emojiOption}>{emoji}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             )}
 
             {/* comment input */}
@@ -195,7 +207,7 @@ export default function BulletinBoardScreen({ navigation }) {
               {post.createdAt?.toDate().toLocaleString() || "Just now"}
             </Text>
           </View>
-        ))}
+        )))}
       </ScrollView>
     </View>
   );
@@ -274,7 +286,7 @@ const styles = StyleSheet.create({
   reactionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'flex-start', 
     marginTop: 8,
   },
 
@@ -298,14 +310,12 @@ const styles = StyleSheet.create({
 
   addReaction: {
     fontSize: 22,
-    marginBottom: 10,
   },
 
   commentBubble: {
     fontSize: 22,
     marginTop: 8,
   },
-
 
   timestamp: {
     fontSize: 12,
@@ -317,6 +327,35 @@ const styles = StyleSheet.create({
   commentList: {
     marginTop: 16,
   },
+
+  emptyState: {
+  alignItems: 'center',
+  marginTop: 80,
+  gap: 12,
+},
+
+emptyText: {
+  fontSize: 16,
+  color: '#aaa',
+  fontStyle: 'italic',
+},
+
+emojiPicker: {
+  flexDirection: 'row',
+  justifyContent: 'space-around',
+  backgroundColor: '#fff',
+  borderRadius: 12,
+  paddingVertical: 8,
+  paddingHorizontal: 4,
+  marginTop: 8,
+  shadowColor: '#000',
+  shadowOpacity: 0.1,
+  shadowRadius: 6,
+  elevation: 3,
+},
+emojiOption: {
+  fontSize: 26,
+},
 
 });
 
